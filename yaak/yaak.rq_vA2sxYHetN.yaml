@@ -1,0 +1,26 @@
+type: http_request
+model: http_request
+id: rq_vA2sxYHetN
+createdAt: 2025-10-24T23:13:55.216919
+updatedAt: 2025-10-24T23:14:53.339537
+workspaceId: wk_Nduv5LSXcS
+folderId: null
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: ''
+sortPriority: -1761347635214.0
+url: http://localhost:3000/api/files/:path{.+}
+urlParameters:
+- enabled: true
+  name: :path{.+}
+  value: test/test
+  id: CnN85KNuFr
+- enabled: true
+  name: ''
+  value: ''
+  id: j2CB4yQdSW

@@ -1,8 +1,38 @@
-import { randomUUIDv7 } from "bun";
 import { Database } from "bun:sqlite";
+import { randomUUIDv7 } from "bun";
 import { drizzle } from "drizzle-orm/bun-sqlite";
+import { Hono } from "hono";
+import { logger } from "hono/logger";
+import { prettyJSON } from "hono/pretty-json";
 
-const sqlite = new Database("fdb.db", {create: true});
+const sqlite = new Database("fdb.db", { create: true });
 const db = drizzle({ client: sqlite });
 
-console.log(randomUUIDv7());
+const app = new Hono()
+
+	.use(logger())
+	.use(prettyJSON())
+
+	.post("/api/file/upload", (c) => {
+		return c.json({
+			message: "File uploaded successfully",
+			id: randomUUIDv7(),
+		});
+	})
+	.get("/api/files/:path{.+}", (c) => {
+		let filePath = c.req.param("path")!;
+
+		if (filePath.startsWith("/")) {
+			filePath = filePath.slice(1);
+		}
+
+		if (filePath.endsWith("/")) {
+			filePath = filePath.slice(0, -1);
+		}
+
+		const paths = filePath.split("/");
+
+		return c.json({ paths, id: randomUUIDv7() });
+	});
+
+export default app;
