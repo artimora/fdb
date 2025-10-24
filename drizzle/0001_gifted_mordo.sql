@@ -1,0 +1,1 @@
+ALTER TABLE `folders` ADD `name` text NOT NULL;
