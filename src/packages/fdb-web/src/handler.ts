@@ -47,17 +47,17 @@ function getApp(options: MountingOptions) {
 		.get(
 			"/read",
 			routes.file.bytes.read.handle,
-			describeRoute(routes.file.text.read.spec),
+			describeRoute(routes.file.bytes.read.spec),
 		)
 		.post(
 			"/write",
 			routes.file.bytes.write.handle,
-			describeRoute(routes.file.text.write.spec),
+			describeRoute(routes.file.bytes.write.spec),
 		)
 		.patch(
 			"/append",
 			routes.file.bytes.append.handle,
-			describeRoute(routes.file.text.append.spec),
+			describeRoute(routes.file.bytes.append.spec),
 		);
 
 	const fileBase = new Hono()
@@ -94,23 +94,23 @@ function getApp(options: MountingOptions) {
 	const directoryBase = new Hono()
 		.post(
 			"/create",
-			routes.file.bytes.append.handle,
-			describeRoute(routes.file.bytes.append.spec),
+			routes.directory.create.handle,
+			describeRoute(routes.directory.create.spec),
 		)
 		.delete(
 			"/delete",
-			routes.file.bytes.append.handle,
-			describeRoute(routes.file.bytes.append.spec),
+			routes.directory.delete.handle,
+			describeRoute(routes.directory.delete.spec),
 		)
 		.get(
 			"/exists",
-			routes.file.bytes.append.handle,
-			describeRoute(routes.file.bytes.append.spec),
+			routes.directory.exists.handle,
+			describeRoute(routes.directory.exists.spec),
 		)
 		.get(
 			"/files",
-			routes.file.bytes.append.handle,
-			describeRoute(routes.file.bytes.append.spec),
+			routes.directory.files.handle,
+			describeRoute(routes.directory.files.spec),
 		);
 
 	// mount
