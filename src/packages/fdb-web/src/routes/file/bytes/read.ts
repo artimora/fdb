@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("read");
 	},
 	{
-		tags: ["bytes"],
+		summary: "Read Bytes",
+		tags: ["File (Bytes)"],
 	},
 );

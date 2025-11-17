@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("fdb");
 	},
 	{
-		tags: ["base"],
+		summary: "Root",
+		tags: ["Base"],
 	},
 );

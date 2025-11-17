@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("delete");
 	},
 	{
-		tags: ["file"],
+		summary: "Delete File",
+		tags: ["File"],
 	},
 );

@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("append");
 	},
 	{
-		tags: ["bytes"],
+		summary: "Append",
+		tags: ["File (Bytes)"],
 	},
 );

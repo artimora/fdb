@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("exists");
 	},
 	{
-		tags: ["directory"],
+		summary: "Directory Exists",
+		tags: ["Directory"],
 	},
 );

@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("files");
 	},
 	{
-		tags: ["directory"],
+		summary: "Get Files",
+		tags: ["Directory"],
 	},
 );

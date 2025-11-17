@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("delete");
 	},
 	{
-		tags: ["directory"],
+		summary: "Delete Directory",
+		tags: ["Directory"],
 	},
 );

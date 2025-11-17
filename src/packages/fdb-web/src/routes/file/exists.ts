@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("exists");
 	},
 	{
-		tags: ["file"],
+		summary: "File Exists",
+		tags: ["File"],
 	},
 );

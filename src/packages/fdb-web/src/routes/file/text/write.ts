@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("write");
 	},
 	{
-		tags: ["text"],
+		summary: "Write Text",
+		tags: ["File (Text)"],
 	},
 );

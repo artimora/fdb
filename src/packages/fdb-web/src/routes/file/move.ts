@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("move");
 	},
 	{
-		tags: ["file"],
+		summary: "Move File",
+		tags: ["File"],
 	},
 );

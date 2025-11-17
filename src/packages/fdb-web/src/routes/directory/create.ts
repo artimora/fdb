@@ -5,6 +5,7 @@ export default createRoute(
 		return c.text("create");
 	},
 	{
-		tags: ["directory"],
+		summary: "Create Directory",
+		tags: ["Directory"],
 	},
 );
