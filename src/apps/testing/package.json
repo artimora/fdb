@@ -1,0 +1,27 @@
+{
+    "name": "testing",
+    "version": "1.0.0",
+    "type": "module",
+    "packageManager": "bun@1.21.1",
+    "devEngines": {
+        "packageManager": {
+            "name": "bun",
+            "version": "1.21.1"
+        },
+        "runtime": {
+            "name": "bun",
+            "version": "1.21.1"
+        }
+    },
+    "dependencies": {
+        "@copperdevs/fdb": "workspace:*",
+        "hono": "^4.10.3",
+        "kysely-bun-sqlite": "^0.4.0"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    },
+    "scripts": {
+        "dev": "bun run --bun --watch src/index.ts"
+    }
+}

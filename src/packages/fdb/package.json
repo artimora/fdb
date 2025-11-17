@@ -1,0 +1,8 @@
+{
+    "name": "@copperdevs/fdb",
+    "version": "1.0.0",
+    "type": "module",
+    "dependencies": {
+        "kysely": "^0.28.8"
+    }
+}
