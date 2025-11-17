@@ -1,6 +1,6 @@
-import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono/quick";
 import { describeRoute, openAPIRouteHandler } from "hono-openapi";
+import routes from "./routes";
 
 const app = new Hono().basePath("/api/fdb");
 
@@ -19,35 +19,87 @@ app.get(
 	}),
 );
 
-app.get("/", (c) => c.text("fdb"), describeRoute({}));
+app.get("/", routes.root.handle, describeRoute(routes.root.spec));
 
 // file operations
 const fileText = new Hono()
-	.get("/read", describeRoute({}))
-	.post("/write", describeRoute({}))
-	.patch("/append", describeRoute({}));
+	.get(
+		"/read",
+		routes.file.text.read.handle,
+		describeRoute(routes.file.text.read.spec),
+	)
+	.post(
+		"/write",
+		routes.file.text.write.handle,
+		describeRoute(routes.file.text.write.spec),
+	)
+	.patch(
+		"/append",
+		routes.file.text.append.handle,
+		describeRoute(routes.file.text.append.spec),
+	);
 
 const fileBytes = new Hono()
-	.get("/read", describeRoute({}))
-	.post("/write", describeRoute({}))
-	.patch("/append", describeRoute({}));
+	.get(
+		"/read",
+		routes.file.bytes.read.handle,
+		describeRoute(routes.file.text.read.spec),
+	)
+	.post(
+		"/write",
+		routes.file.bytes.write.handle,
+		describeRoute(routes.file.text.write.spec),
+	)
+	.patch(
+		"/append",
+		routes.file.bytes.append.handle,
+		describeRoute(routes.file.text.append.spec),
+	);
 
 const fileBase = new Hono()
 	.route("/text", fileText)
 	.route("/bytes", fileBytes)
-	.post("/create", describeRoute({}))
-	.get("/exists", describeRoute({}))
-	.post("/copy", describeRoute({}))
-	.post("/move", describeRoute({}))
-	.delete("/delete", describeRoute({}));
+	.post(
+		"/create",
+		routes.file.create.handle,
+		describeRoute(routes.file.create.spec),
+	)
+	.get(
+		"/exists",
+		routes.file.exists.handle,
+		describeRoute(routes.file.exists.spec),
+	)
+	.post("/copy", routes.file.copy.handle, describeRoute(routes.file.copy.spec))
+	.post("/move", routes.file.move.handle, describeRoute(routes.file.move.spec))
+	.delete(
+		"/delete",
+		routes.file.delete.handle,
+		describeRoute(routes.file.delete.spec),
+	);
 
 // directory operations
 
 const directoryBase = new Hono()
-	.post("/create", describeRoute({}))
-	.delete("/delete", describeRoute({}))
-	.get("/exists", describeRoute({}))
-	.get("/files", describeRoute({}));
+	.post(
+		"/create",
+		routes.file.bytes.append.handle,
+		describeRoute(routes.file.bytes.append.spec),
+	)
+	.delete(
+		"/delete",
+		routes.file.bytes.append.handle,
+		describeRoute(routes.file.bytes.append.spec),
+	)
+	.get(
+		"/exists",
+		routes.file.bytes.append.handle,
+		describeRoute(routes.file.bytes.append.spec),
+	)
+	.get(
+		"/files",
+		routes.file.bytes.append.handle,
+		describeRoute(routes.file.bytes.append.spec),
+	);
 
 // mount
 app.route("/files", fileBase);
