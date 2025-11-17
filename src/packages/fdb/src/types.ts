@@ -1,4 +1,4 @@
-export type File = {
+export type FileOperations = {
 	writeAllText: (path: string, text: string) => void;
 	appendAllText: (path: string, text: string) => void;
 	readAllText: (path: string) => string;
@@ -14,7 +14,7 @@ export type File = {
 	delete: (path: string) => void;
 };
 
-export type Directory = {
+export type DirectoryOperations = {
 	create: (path: string) => void;
 	delete: (path: string) => void;
 	exists: (path: string) => boolean;

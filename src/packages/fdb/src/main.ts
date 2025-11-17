@@ -1,5 +1,7 @@
 import type { Kysely } from "kysely";
-import type { Directory, File } from "./types";
+import getDirectoryOperations from "./operations/directory";
+import getFileOperations from "./operations/file";
+import type { DirectoryOperations, FileOperations } from "./types";
 
 export function createFDB<DB>(db: Kysely<DB>) {
 	return new fdb<DB>(db);
@@ -8,8 +10,8 @@ export function createFDB<DB>(db: Kysely<DB>) {
 export class fdb<DB> {
 	private db: Kysely<DB>;
 
-	public file: File = {};
-	public directory: Directory = {};
+	public file: FileOperations = getFileOperations();
+	public directory: DirectoryOperations = getDirectoryOperations();
 
 	constructor(db: Kysely<DB>) {
 		this.db = db;
