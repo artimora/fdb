@@ -22,6 +22,7 @@
   },
   "scripts": {
     // we do this here instead of in the testing projects package.json because buns monorepo can only watch files in the same directory on windows
-    "dev": "bun run --bun --watch src/apps/testing/src/index.ts"
+    "dev:api": "bun run --bun --watch src/apps/api-testing/src/index.ts",
+    "dev": "bun run --bun src/apps/testing/src/index.ts"
   }
 }

@@ -1,5 +1,5 @@
 {
-    "name": "testing",
+    "name": "api-testing",
     "version": "1.0.0",
     "type": "module",
     "packageManager": "bun@1.21.1",
@@ -15,6 +15,9 @@
     },
     "dependencies": {
         "@copperdevs/fdb": "workspace:*",
+        "@copperdevs/fdb-web": "workspace:*",
+        "@scalar/hono-api-reference": "^0.9.24",
+        "hono": "^4.10.3",
         "kysely-bun-sqlite": "^0.4.0"
     },
     "devDependencies": {
