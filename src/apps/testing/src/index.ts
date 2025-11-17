@@ -24,7 +24,17 @@ const fileDB = getHandler(createFDB(db));
 const app = new Hono()
 	.use(logger())
 	.get("/", (c) => c.text("Hono!"))
-	.get("/scalar", Scalar({ url: "/api/fdb/openapi" }))
+	.get(
+		"/scalar",
+		Scalar({
+			url: "/api/fdb/openapi",
+			theme: "elysiajs",
+			showSidebar: true,
+			showToolbar: "never",
+			defaultOpenAllTags: true,
+			hideClientButton: true,
+		}),
+	)
 	.mount("/", fileDB.mount);
 
 export default app;

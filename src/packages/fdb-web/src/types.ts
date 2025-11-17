@@ -1,9 +1,10 @@
+import type { fdb } from "@copperdevs/fdb";
 import type { Context, TypedResponse } from "hono";
 import type { BlankEnv, BlankInput } from "hono/types";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { DescribeRouteOptions } from "hono-openapi";
+import type routes from "./routes";
 
-// Aliases for Hono API callback and description
 export type APICallback = (
 	c: Context<BlankEnv, string, any> | Context<BlankEnv, string, BlankInput>,
 ) => Response & TypedResponse<string, ContentfulStatusCode, "text">;
@@ -13,9 +14,15 @@ export type APIRoute = {
 	spec: DescribeRouteOptions;
 };
 
-export function createRoute(
-	handle: APICallback,
-	spec: DescribeRouteOptions,
-): APIRoute {
-	return { spec, handle };
-}
+export type MountingOptions = {
+	base: string | undefined;
+};
+
+export type fdbWeb = fdb & {
+	mount: (
+		request: Request,
+		// biome-ignore lint/suspicious/noExplicitAny: generic
+		...args: any
+	) => Response | Promise<Response>;
+	routes: typeof routes;
+};

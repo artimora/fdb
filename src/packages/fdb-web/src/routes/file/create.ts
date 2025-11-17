@@ -1,4 +1,4 @@
-import { createRoute } from "../../types";
+import { createRoute } from "../../main";
 
 export default createRoute(
 	(c) => {
