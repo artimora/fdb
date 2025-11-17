@@ -1,6 +1,9 @@
-import type { DirectoryOperations } from "../types";
+import type { Kysely } from "kysely";
+import type { DirectoryOperations, FDB } from "../types";
 
-export default function getDirectoryOperations(): DirectoryOperations {
+export default function getDirectoryOperations(
+	db: Kysely<FDB>,
+): DirectoryOperations {
 	return {
 		create: (path: string): void => {
 			throw new Error("Function not implemented.");

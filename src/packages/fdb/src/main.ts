@@ -1,19 +1,21 @@
 import type { Kysely } from "kysely";
 import getDirectoryOperations from "./operations/directory";
 import getFileOperations from "./operations/file";
-import type { DirectoryOperations, FileOperations } from "./types";
+import type { DirectoryOperations, FDB, FileOperations } from "./types";
 
 export function createFDB<DB>(db: Kysely<DB>) {
-	return new fdb<DB>(db);
+	return new fdb(db as unknown as Kysely<FDB>);
 }
 
-export class fdb<DB> {
-	private db: Kysely<DB>;
+export class fdb {
+	private db: Kysely<FDB>;
 
-	public file: FileOperations = getFileOperations();
-	public directory: DirectoryOperations = getDirectoryOperations();
+	public file: FileOperations;
+	public directory: DirectoryOperations;
 
-	constructor(db: Kysely<DB>) {
+	constructor(db: Kysely<FDB>) {
 		this.db = db;
+		this.file = getFileOperations(this.db);
+		this.directory = getDirectoryOperations(this.db);
 	}
 }

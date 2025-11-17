@@ -20,3 +20,23 @@ export type DirectoryOperations = {
 	exists: (path: string) => boolean;
 	getFiles: (path: string) => string[]; // TODO: add filter option and subdirectories option
 };
+
+export interface FoldersTable {
+	uuid: string; // PK
+	name: string; // not null
+	workspace_uuid: string; // not null
+	parent_folder: string | null; // nullable FK → folders.uuid
+}
+
+export interface FilesTable {
+	uuid: string; // PK
+	name: string; // not null
+	data: Uint8Array | null; // blob → Uint8Array (Kysely convention)
+	workspace_uuid: string; // not null
+	parent_folder: string | null; // nullable FK → folders.uuid
+}
+
+export interface FDB {
+	folders: FoldersTable;
+	files: FilesTable;
+}

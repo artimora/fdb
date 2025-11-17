@@ -1,6 +1,7 @@
-import type { FileOperations } from "../types";
+import type { Kysely } from "kysely";
+import type { FDB, FileOperations } from "../types";
 
-export default function getFileOperations(): FileOperations {
+export default function getFileOperations(db: Kysely<FDB>): FileOperations {
 	return {
 		writeAllText: (path: string, text: string): void => {
 			throw new Error("Function not implemented.");
