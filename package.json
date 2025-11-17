@@ -19,5 +19,9 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.0"
+  },
+  "scripts": {
+    // we do this here instead of in the testing projects package.json because buns monorepo can only watch files in the same directory on windows
+    "dev": "bun run --bun --watch src/apps/testing/src/index.ts"
   }
 }

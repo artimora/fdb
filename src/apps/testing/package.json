@@ -15,13 +15,12 @@
     },
     "dependencies": {
         "@copperdevs/fdb": "workspace:*",
+        "@copperdevs/fdb-web": "workspace:*",
+        "@scalar/hono-api-reference": "^0.9.24",
         "hono": "^4.10.3",
         "kysely-bun-sqlite": "^0.4.0"
     },
     "devDependencies": {
         "@types/bun": "latest"
-    },
-    "scripts": {
-        "dev": "bun run --bun --watch src/index.ts"
     }
 }

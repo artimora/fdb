@@ -1,6 +1,9 @@
 import { Database } from "bun:sqlite";
 import { createFDB, getProvider } from "@copperdevs/fdb";
+import { getHandler } from "@copperdevs/fdb-web";
+import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
+import { logger } from "hono/logger";
 import { Kysely } from "kysely";
 import { BunSqliteDialect } from "kysely-bun-sqlite";
 import { migrateToLatest } from "./migrations";
@@ -16,9 +19,12 @@ const db = new Kysely<any>({
 
 await migrateToLatest(db);
 
-const fileDB = createFDB(db);
-const app = new Hono();
+const fileDB = getHandler(createFDB(db));
 
-app.get("/", (c) => c.text("Hono!"));
+const app = new Hono()
+	.use(logger())
+	.get("/", (c) => c.text("Hono!"))
+	.get("/scalar", Scalar({ url: "/api/fdb/openapi" }))
+	.mount("/", fileDB.mount);
 
 export default app;
