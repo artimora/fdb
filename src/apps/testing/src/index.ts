@@ -1,10 +1,8 @@
 import { Database } from "bun:sqlite";
-import { createFDB, getProvider } from "@copperdevs/fdb";
+import { createFDB } from "@copperdevs/fdb";
 import { Kysely } from "kysely";
 import { BunSqliteDialect } from "kysely-bun-sqlite";
 import { migrateToLatest } from "./migrations";
-
-getProvider();
 
 // biome-ignore lint/suspicious/noExplicitAny: we dont need anything but the local
 const db = new Kysely<any>({

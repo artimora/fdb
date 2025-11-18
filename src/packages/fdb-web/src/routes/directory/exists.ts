@@ -1,11 +1,27 @@
-import { createRoute } from "../../main";
+import { createRoute, getFDB } from "../../main";
 
 export default createRoute(
-	(c) => {
-		return c.text("exists");
+	async (c) => {
+		const fdb = getFDB(c);
+
+		const exists = await fdb.directory.exists(c.req.query("path"));
+
+		return c.json(exists);
 	},
 	{
 		summary: "Directory Exists",
 		tags: ["Directory"],
+
+		parameters: [
+			{
+				name: "path",
+				in: "query",
+				description: "Status values that need to be searched for",
+				required: true,
+				schema: {
+					type: "string",
+				},
+			},
+		],
 	},
 );

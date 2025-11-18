@@ -1,10 +1,20 @@
+import type { fdb } from "@copperdevs/fdb";
 import { Hono } from "hono/quick";
 import { describeRoute, openAPIRouteHandler } from "hono-openapi";
 import routes from "./routes";
 import type { MountingOptions } from "./types";
 
-function getApp(options: MountingOptions) {
-	const app = new Hono().basePath(options.base ?? "/api/fdb");
+function getApp(options: MountingOptions, fdb: fdb) {
+	const app = new Hono<{
+		Variables: {
+			fdb: fdb;
+		};
+	}>().basePath(options.base ?? "/api/fdb");
+
+	app.use("*", async (c, next) => {
+		c.set("fdb", fdb);
+		await next();
+	});
 
 	// general
 	app.get(

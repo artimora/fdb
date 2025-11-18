@@ -32,7 +32,7 @@ const app = new Hono()
 			showSidebar: true,
 			showToolbar: "never",
 			defaultOpenAllTags: true,
-			hideClientButton: true,
+			isEditable: true,
 		}),
 	)
 	.mount("/", fileDB.mount);

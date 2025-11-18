@@ -17,7 +17,7 @@ export type FileOperations = {
 export type DirectoryOperations = {
 	create: (path: string) => void;
 	delete: (path: string) => void;
-	exists: (path: string) => Promise<boolean>;
+	exists: (path: string | undefined) => Promise<boolean>;
 	getFiles: (path: string) => string[]; // TODO: add filter option and subdirectories option
 };
 

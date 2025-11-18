@@ -5,9 +5,16 @@ import type { ContentfulStatusCode } from "hono/utils/http-status";
 import type { DescribeRouteOptions } from "hono-openapi";
 import type routes from "./routes";
 
+export type APICallbackContext =
+	| Context<BlankEnv, string, any>
+	| Context<BlankEnv, string, BlankInput>;
+
+export type APICallbackResponse = Response &
+	TypedResponse<string, ContentfulStatusCode, "text">;
+
 export type APICallback = (
-	c: Context<BlankEnv, string, any> | Context<BlankEnv, string, BlankInput>,
-) => Response & TypedResponse<string, ContentfulStatusCode, "text">;
+	c: APICallbackContext,
+) => Promise<APICallbackResponse> | APICallbackResponse;
 
 export type APIRoute = {
 	handle: APICallback;
@@ -25,4 +32,8 @@ export type fdbWeb = fdb & {
 		...args: any
 	) => Response | Promise<Response>;
 	routes: typeof routes;
+};
+
+export type FileInfo = {
+	path: string;
 };

@@ -1,41 +1,60 @@
 import { randomUUID } from "node:crypto";
-import nodePath from "node:path";
 import type { Kysely } from "kysely";
 import type { DirectoryOperations, FDB } from "../types";
+import { splitPath } from "../util";
 
 export default function getDirectoryOperations(
 	db: Kysely<FDB>,
 ): DirectoryOperations {
 	return {
 		create: async function (path: string): Promise<void> {
-			if (await this.exists(path)) return;
+			if (await this.exists(path)) return; // direct checking
 
-			const parts = path.split(nodePath.sep);
+			const parts = splitPath(path);
 			console.log(parts);
 
 			let previous: string | null = null;
+			let built: string = "";
 
 			for (const v of parts) {
-				const id = randomUUID() as string;
+				built = `${built}/${v}`;
 
-				await db
-					.insertInto("folders")
-					.values({
-						uuid: id,
-						name: v,
-						workspace_uuid: "default",
-						parent_folder: previous,
-					})
-					.execute();
+				const previousPart = await db
+					.selectFrom("folders")
+					.select(["uuid"])
+					.where("name", "=", v)
+					.where("workspace_uuid", "=", "default")
+					.where("parent_folder", "is", previous)
+					.executeTakeFirst();
 
-				previous = id; // safe now
+				console.log(`built: ${built} | exists: ${previousPart !== undefined}`);
+
+				if (previousPart === undefined) {
+					const id = randomUUID() as string;
+
+					await db
+						.insertInto("folders")
+						.values({
+							uuid: id,
+							name: v,
+							workspace_uuid: "default",
+							parent_folder: previous,
+						})
+						.execute();
+
+					previous = id; // safe now
+				} else {
+					previous = previousPart.uuid;
+				}
 			}
 		},
 		delete: (path: string): void => {
 			throw new Error("Function not implemented.");
 		},
-		exists: async (path: string): Promise<boolean> => {
-			const parts = path.split(nodePath.sep).filter(Boolean);
+		exists: async (path: string | undefined): Promise<boolean> => {
+			if (path === undefined) return false;
+
+			const parts = splitPath(path);
 			let previous: string | null = null;
 
 			for (const v of parts) {
