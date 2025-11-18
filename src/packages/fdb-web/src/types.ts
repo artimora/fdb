@@ -2,15 +2,26 @@ import type { fdb } from "@copperdevs/fdb";
 import type { Context, TypedResponse } from "hono";
 import type { BlankEnv, BlankInput } from "hono/types";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
+import type { InvalidJSONValue, JSONParsed, JSONValue } from "hono/utils/types";
 import type { DescribeRouteOptions } from "hono-openapi";
 import type routes from "./routes";
 
+// hono mimic type
+type JSONRespondReturn<
+	// biome-ignore lint/complexity/noBannedTypes: hono type mimic
+	T extends JSONValue | {} | InvalidJSONValue,
+	U extends ContentfulStatusCode,
+> = Response & TypedResponse<JSONParsed<T>, U, "json">;
+
 export type APICallbackContext =
-	| Context<BlankEnv, string, any>
-	| Context<BlankEnv, string, BlankInput>;
+	// biome-ignore lint/suspicious/noExplicitAny: hono type mimc
+	Context<BlankEnv, string, any> | Context<BlankEnv, string, BlankInput>;
 
 export type APICallbackResponse = Response &
-	TypedResponse<string, ContentfulStatusCode, "text">;
+	(
+		| TypedResponse<string, ContentfulStatusCode, "text">
+		| JSONRespondReturn<boolean, ContentfulStatusCode>
+	);
 
 export type APICallback = (
 	c: APICallbackContext,

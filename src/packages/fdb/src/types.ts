@@ -15,10 +15,10 @@ export type FileOperations = {
 };
 
 export type DirectoryOperations = {
-	create: (path: string) => void;
-	delete: (path: string) => void;
+	create: (path: string | undefined) => void;
+	delete: (path: string | undefined) => void;
 	exists: (path: string | undefined) => Promise<boolean>;
-	getFiles: (path: string) => string[]; // TODO: add filter option and subdirectories option
+	getFiles: (path: string | undefined) => string[]; // TODO: add filter option and subdirectories option
 };
 
 export interface FoldersTable {

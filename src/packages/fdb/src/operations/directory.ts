@@ -7,7 +7,8 @@ export default function getDirectoryOperations(
 	db: Kysely<FDB>,
 ): DirectoryOperations {
 	return {
-		create: async function (path: string): Promise<void> {
+		create: async function (path: string | undefined): Promise<void> {
+			if (path === undefined) return;
 			if (await this.exists(path)) return; // direct checking
 
 			const parts = splitPath(path);
@@ -48,7 +49,7 @@ export default function getDirectoryOperations(
 				}
 			}
 		},
-		delete: (path: string): void => {
+		delete: (path: string | undefined): void => {
 			throw new Error("Function not implemented.");
 		},
 		exists: async (path: string | undefined): Promise<boolean> => {
@@ -74,7 +75,7 @@ export default function getDirectoryOperations(
 
 			return true;
 		},
-		getFiles: (path: string): string[] => {
+		getFiles: (path: string | undefined): string[] => {
 			throw new Error("Function not implemented.");
 		},
 	};
