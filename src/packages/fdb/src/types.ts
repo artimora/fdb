@@ -1,24 +1,27 @@
+export type PotentialString = string | undefined;
+
 export type FileOperations = {
-	writeAllText: (path: string, text: string) => void;
-	appendAllText: (path: string, text: string) => void;
-	readAllText: (path: string) => string;
+	writeAllText: (path: PotentialString, text: string) => void;
+	appendAllText: (path: PotentialString, text: string) => void;
+	readAllText: (path: PotentialString) => string;
 
-	writeAllBytes: (path: string, bytes: Uint8Array) => void;
-	appendAllBytes: (path: string, bytes: Uint8Array) => void;
-	readAllBytes: (path: string) => Uint8Array;
+	writeAllBytes: (path: PotentialString, bytes: Uint8Array) => void;
+	appendAllBytes: (path: PotentialString, bytes: Uint8Array) => void;
+	readAllBytes: (path: PotentialString) => Uint8Array;
 
-	create: (path: string) => void;
-	exists: (path: string) => boolean;
-	copy: (originalPath: string, newPath: string) => void;
-	move: (path: string) => void;
-	delete: (path: string) => void;
+	create: (path: PotentialString) => void;
+	exists: (path: PotentialString) => boolean;
+	copy: (originalPath: PotentialString, newPath: PotentialString) => void;
+	move: (path: PotentialString, newPath: PotentialString) => void;
+	delete: (path: PotentialString) => void;
 };
 
 export type DirectoryOperations = {
-	create: (path: string | undefined) => void;
-	delete: (path: string | undefined) => void;
-	exists: (path: string | undefined) => Promise<boolean>;
-	getFiles: (path: string | undefined) => string[]; // TODO: add filter option and subdirectories option
+	create: (path: PotentialString) => void;
+	delete: (path: PotentialString) => void;
+	exists: (path: PotentialString) => Promise<boolean>;
+	getFiles: (path: PotentialString) => string[]; // TODO: add filter option and subdirectories option
+	getFolderId: (path: PotentialString) => PotentialString;
 };
 
 export interface FoldersTable {

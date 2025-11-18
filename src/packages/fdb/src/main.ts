@@ -15,7 +15,7 @@ export class fdb {
 
 	constructor(db: Kysely<FDB>) {
 		this.db = db;
-		this.file = getFileOperations(this.db);
 		this.directory = getDirectoryOperations(this.db);
+		this.file = getFileOperations(this.db, this.directory);
 	}
 }
