@@ -17,4 +17,7 @@ await migrateToLatest(db);
 
 const fileDB = createFDB(db);
 
+const exists = await fileDB.directory.exists("root/test");
+console.log(`exists: ${exists}`);
+
 fileDB.directory.create("root/test");

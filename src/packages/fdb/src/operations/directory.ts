@@ -7,14 +7,17 @@ export default function getDirectoryOperations(
 	db: Kysely<FDB>,
 ): DirectoryOperations {
 	return {
-		create: async (path: string): Promise<void> => {
+		create: async function (path: string): Promise<void> {
+			if (await this.exists(path)) return;
+
 			const parts = path.split(nodePath.sep);
 			console.log(parts);
 
 			let previous: string | null = null;
 
-			parts.forEach(async (v) => {
+			for (const v of parts) {
 				const id = randomUUID() as string;
+
 				await db
 					.insertInto("folders")
 					.values({
@@ -25,14 +28,32 @@ export default function getDirectoryOperations(
 					})
 					.execute();
 
-				previous = id;
-			});
+				previous = id; // safe now
+			}
 		},
 		delete: (path: string): void => {
 			throw new Error("Function not implemented.");
 		},
-		exists: (path: string): boolean => {
-			throw new Error("Function not implemented.");
+		exists: async (path: string): Promise<boolean> => {
+			const parts = path.split(nodePath.sep).filter(Boolean);
+			let previous: string | null = null;
+
+			for (const v of parts) {
+				// Try to find the folder at this level
+				const row = await db
+					.selectFrom("folders")
+					.select(["uuid"])
+					.where("name", "=", v)
+					.where("workspace_uuid", "=", "default")
+					.where("parent_folder", "is", previous)
+					.executeTakeFirst();
+
+				if (!row) return false;
+
+				previous = row.uuid;
+			}
+
+			return true;
 		},
 		getFiles: (path: string): string[] => {
 			throw new Error("Function not implemented.");
