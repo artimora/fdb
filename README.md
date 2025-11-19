@@ -12,6 +12,12 @@ todo
 - add: file info (batched)
     - core
     - webapi
+- add: directory children
+    - core
+    - webapi
+- update: directory files: recursive
+    - core
+    - webapi
 - consider: directory move
     - core
     - webapi
