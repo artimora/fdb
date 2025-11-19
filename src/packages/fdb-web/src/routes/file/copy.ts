@@ -1,11 +1,105 @@
-import { createRoute } from "../../main";
+import { FileNotFoundError, type MoveOptions } from "@copperdevs/fdb";
+import { createRoute, getFDB } from "../../main";
 
 export default createRoute(
-	(c) => {
-		return c.text("copy");
+	async (c) => {
+		const fdb = getFDB(c);
+
+		const originalPath = c.req.query("originalPath");
+		const newPath = c.req.query("newPath");
+		const overwrite = c.req.query("overwrite");
+		const createDirectories = c.req.query("createDirectories");
+
+		const options: MoveOptions = {
+			originalPath,
+			newPath,
+			overwrite: JSON.parse(overwrite ?? "true"),
+			createDirectories: JSON.parse(createDirectories ?? "true"),
+		};
+
+		console.log(options);
+
+		try {
+			await fdb.file.copy(options);
+			return c.json(true);
+		} catch (error) {
+			if (error instanceof FileNotFoundError) {
+				c.status(400);
+				return c.json({ message: error.message });
+			}
+		}
+
+		c.status(400);
+		return c.json({ message: "generic" });
 	},
 	{
 		summary: "Copy File",
 		tags: ["File"],
+
+		parameters: [
+			{
+				name: "originalPath",
+				in: "query",
+				description: "Target path to copy from",
+				required: true,
+				schema: {
+					type: "string",
+				},
+			},
+			{
+				name: "newPath",
+				in: "query",
+				description: "Target path to copy to",
+				required: true,
+				schema: {
+					type: "string",
+				},
+			},
+			{
+				name: "overwrite",
+				in: "query",
+				description: "Whether to overwrite the file if it already exists",
+				required: false,
+				schema: {
+					type: "boolean",
+					default: true,
+				},
+			},
+			{
+				name: "createDirectories",
+				in: "query",
+				description: "Whether to create directories if they don't exist",
+				required: false,
+				schema: {
+					type: "boolean",
+					default: true,
+				},
+			},
+		],
+		responses: {
+			200: {
+				description: "File was successfully copied",
+				content: {
+					"application/json": {
+						schema: {
+							type: "boolean",
+						},
+					},
+				},
+			},
+			400: {
+				description: "File could not be copied",
+				content: {
+					"application/json": {
+						schema: {
+							type: "object",
+							properties: {
+								message: { type: "string" },
+							},
+						},
+					},
+				},
+			},
+		},
 	},
 );

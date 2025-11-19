@@ -18,7 +18,7 @@ export function getHandler(
 ): fdbWeb {
 	return (fdb && {
 		// biome-ignore lint/suspicious/noExplicitAny: generic
-		mount: (request: Request, ...args: any) => {
+		fetch: (request: Request, ...args: any) => {
 			return app(mountingOptions ?? defaultOptions, fdb).fetch(request, args);
 		},
 		routes: routes,

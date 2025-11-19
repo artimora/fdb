@@ -1,7 +1,12 @@
 import { randomUUID } from "node:crypto";
 import type { Kysely } from "kysely";
 import { FileNotFoundError } from "../errors";
-import type { DirectoryOperations, FDB, FileOperations } from "../types";
+import type {
+	DirectoryOperations,
+	FDB,
+	FileOperations,
+	MoveOptions,
+} from "../types";
 import { cleanPath, splitPath } from "../util";
 
 export default function getFileOperations(
@@ -145,22 +150,69 @@ export default function getFileOperations(
 			return row !== undefined && row !== null;
 		},
 
-		copy: (
-			originalPath: string | undefined,
-			newPath: string | undefined | undefined,
-		): void => {
-			if (originalPath === undefined)
+		copy: async function (options: MoveOptions): Promise<void> {
+			options.overwrite ??= true;
+			options.createDirectories ??= true;
+
+			if (options.originalPath === undefined)
 				throw new FileNotFoundError("Original path is undefined");
-			if (newPath === undefined)
+			if (options.newPath === undefined)
 				throw new FileNotFoundError("New path is undefined");
+
+			if (!(await this.exists(options.originalPath)))
+				throw new FileNotFoundError("Original path doesn't exist");
+			if ((await this.exists(options.newPath)) && !options.overwrite)
+				throw new FileNotFoundError("New path already exists");
+
+			const originalPath = await getPathInfo(options.originalPath);
+			const newPath = await getPathInfo(options.newPath);
+
+			if (options.overwrite && (await this.exists(options.newPath))) {
+				await this.delete(options.newPath);
+			}
+
+			await this.create(options.newPath);
+
+			const fileData = await db
+				.selectFrom("files")
+				.select(["data"])
+				.where("name", "=", originalPath.name)
+				.where("parent_folder", "is", originalPath.parentId)
+				.where("workspace_uuid", "=", "default")
+				.executeTakeFirst();
+
+			if (!fileData) {
+				throw new FileNotFoundError(
+					`File at path ${options.originalPath} not found`,
+				);
+			}
+
+			await db
+				.updateTable("files")
+				.set({
+					data: fileData.data,
+				})
+				.where("name", "=", newPath.name)
+				.where("parent_folder", "is", newPath.parentId)
+				.where("workspace_uuid", "=", "default")
+				.executeTakeFirst();
 		},
-		move: (path: string | undefined): void => {
+		move: async function (options: MoveOptions): Promise<void> {
+			await this.copy(options);
+			await this.delete(options.originalPath);
+		},
+		delete: async (path: string | undefined): Promise<void> => {
 			if (path === undefined || path === "")
 				throw new FileNotFoundError("Path is undefined");
-		},
-		delete: (path: string | undefined): void => {
-			if (path === undefined || path === "")
-				throw new FileNotFoundError("Path is undefined");
+
+			const { parentId, name } = await getPathInfo(path);
+
+			await db
+				.deleteFrom("files")
+				.where("name", "=", name)
+				.where("parent_folder", "is", parentId)
+				.where("workspace_uuid", "=", "default")
+				.execute();
 		},
 	};
 }

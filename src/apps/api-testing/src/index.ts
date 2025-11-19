@@ -50,6 +50,6 @@ const app = new Hono()
 			isEditable: true,
 		}),
 	)
-	.mount("/", fileDB.mount);
+	.mount("/", fileDB.fetch);
 
 export default app;

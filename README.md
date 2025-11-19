@@ -2,15 +2,16 @@
 
 todo
 - add file type to files table
-- file move
+
+- implement: directory delete
     - core
     - webapi
-- file copy
+- add: file info
     - core
     - webapi
-- file delete
+- add: file info (batched)
     - core
     - webapi
-- directory delete
+- consider: directory move
     - core
     - webapi

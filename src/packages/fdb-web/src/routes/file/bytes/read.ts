@@ -14,13 +14,13 @@ export default createRoute(
 		} catch (error) {
 			if (error instanceof FileNotFoundError) {
 				c.status(400);
-				return c.json(false);
+				return c.json({ message: error.message });
 			}
 		}
 
 		// this could have a better return maybe?
 		c.status(400);
-		return c.json(false);
+		return c.json({ message: "generic" });
 	},
 	{
 		summary: "Read Bytes",
@@ -51,7 +51,10 @@ export default createRoute(
 				content: {
 					"application/json": {
 						schema: {
-							type: "boolean",
+							type: "object",
+							properties: {
+								message: { type: "string" },
+							},
 						},
 					},
 				},

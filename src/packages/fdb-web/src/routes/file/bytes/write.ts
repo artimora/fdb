@@ -13,7 +13,7 @@ export default createRoute(
 		} catch (error) {
 			if (error instanceof FileNotFoundError) {
 				c.status(400);
-				return c.json(false);
+				return c.json({ message: error.message });
 			}
 		}
 
@@ -53,7 +53,10 @@ export default createRoute(
 				content: {
 					"application/json": {
 						schema: {
-							type: "boolean",
+							type: "object",
+							properties: {
+								message: { type: "string" },
+							},
 						},
 					},
 				},

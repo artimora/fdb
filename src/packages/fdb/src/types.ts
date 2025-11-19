@@ -5,6 +5,14 @@ export type Maybe<T> = T | undefined | null;
 
 export type MaybePromise<T> = Promise<T> | T;
 
+export type MoveOptions = {
+	originalPath: Potential<string>;
+	newPath: Potential<string>;
+
+	overwrite: Potential<boolean>;
+	createDirectories: Potential<boolean>;
+};
+
 // potential for input, nullable for output
 export type FileOperations = {
 	writeAllText: (path: Potential<string>, text: string) => MaybePromise<void>;
@@ -18,14 +26,8 @@ export type FileOperations = {
 
 	create: (path: Potential<string>) => MaybePromise<void>;
 	exists: (path: Potential<string>) => MaybePromise<boolean>;
-	copy: (
-		originalPath: Potential<string>,
-		newPath: Potential<string>,
-	) => MaybePromise<void>;
-	move: (
-		path: Potential<string>,
-		newPath: Potential<string>,
-	) => MaybePromise<void>;
+	copy: (options: MoveOptions) => MaybePromise<void>;
+	move: (options: MoveOptions) => MaybePromise<void>;
 	delete: (path: Potential<string>) => MaybePromise<void>;
 };
 

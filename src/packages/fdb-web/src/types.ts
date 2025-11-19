@@ -45,11 +45,11 @@ export type MountingOptions = {
 };
 
 export type fdbWeb = fdb & {
-	mount: (
+	fetch: (
 		request: Request,
 		// biome-ignore lint/suspicious/noExplicitAny: generic
 		...args: any
-	) => Response | Promise<Response>;
+	) => MaybePromise<Response>;
 	routes: typeof routes;
 };
 
