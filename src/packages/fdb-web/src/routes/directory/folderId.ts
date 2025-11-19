@@ -28,5 +28,27 @@ export default createRoute(
 				},
 			},
 		],
+		responses: {
+			200: {
+				description: "Directory ID was retrieved successfully",
+				content: {
+					"application/json": {
+						schema: {
+							type: "boolean",
+						},
+					},
+				},
+			},
+			404: {
+				description: "Directory ID was not found",
+				content: {
+					"application/json": {
+						schema: {
+							type: "boolean",
+						},
+					},
+				},
+			},
+		},
 	},
 );

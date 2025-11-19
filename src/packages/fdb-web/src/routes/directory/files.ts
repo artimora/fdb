@@ -28,5 +28,30 @@ export default createRoute(
 				},
 			},
 		],
+		responses: {
+			200: {
+				description: "Files for given directory were retrieved successfully",
+				content: {
+					"application/json": {
+						schema: {
+							type: "array",
+							items: {
+								type: "string",
+							},
+						},
+					},
+				},
+			},
+			404: {
+				description: "Files for given directory were not found",
+				content: {
+					"application/json": {
+						schema: {
+							type: "null",
+						},
+					},
+				},
+			},
+		},
 	},
 );

@@ -8,6 +8,7 @@ export default createRoute(
 			c.status(400);
 			return c.json(false);
 		}
+
 		fdb.directory.create(c.req.query("path"));
 
 		return c.json(true);
@@ -27,5 +28,27 @@ export default createRoute(
 				},
 			},
 		],
+		responses: {
+			200: {
+				description: "Directory created successfully",
+				content: {
+					"application/json": {
+						schema: {
+							type: "boolean",
+						},
+					},
+				},
+			},
+			400: {
+				description: "Directory already exists",
+				content: {
+					"application/json": {
+						schema: {
+							type: "boolean",
+						},
+					},
+				},
+			},
+		},
 	},
 );

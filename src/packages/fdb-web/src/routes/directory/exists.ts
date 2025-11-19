@@ -23,5 +23,17 @@ export default createRoute(
 				},
 			},
 		],
+		responses: {
+			200: {
+				description: "Directory was checked successfully",
+				content: {
+					"application/json": {
+						schema: {
+							type: "boolean",
+						},
+					},
+				},
+			},
+		},
 	},
 );
