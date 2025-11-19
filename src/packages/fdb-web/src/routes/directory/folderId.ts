@@ -1,4 +1,3 @@
-import { splitPath } from "@copperdevs/fdb/src/util";
 import { createRoute, getFDB } from "../../main";
 
 export default createRoute(

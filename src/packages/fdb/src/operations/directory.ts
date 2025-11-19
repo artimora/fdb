@@ -20,7 +20,6 @@ export default function getDirectoryOperations(
 			if (await this.exists(path)) return; // direct checking if it already exists
 
 			const parts = splitPath(path);
-			console.log(parts);
 
 			let previous: Nullable<string> = null;
 			let built: string = "";
@@ -35,8 +34,6 @@ export default function getDirectoryOperations(
 					.where("workspace_uuid", "=", "default")
 					.where("parent_folder", "is", previous)
 					.executeTakeFirst();
-
-				console.log(`built: ${built} | exists: ${previousPart !== undefined}`);
 
 				if (previousPart === undefined) {
 					const id = randomUUID() as string;
@@ -87,10 +84,19 @@ export default function getDirectoryOperations(
 
 			return true;
 		},
-		getFiles: (path: Potential<string>): string[] => {
+		getFiles: async function (path: Potential<string>): Promise<string[]> {
 			if (path === undefined)
 				throw new DirectoryNotFoundError("Path is undefined");
-			throw new Error("Function not implemented.");
+
+			const id = await this.getFolderId(path);
+
+			const files = await db
+				.selectFrom("files")
+				.select(["uuid"])
+				.where("parent_folder", "is", id)
+				.execute();
+
+			return files.map((f) => f.uuid);
 		},
 		getFolderId: async (path: Maybe<string>): Promise<Nullable<string>> => {
 			if (path === null) return null;
