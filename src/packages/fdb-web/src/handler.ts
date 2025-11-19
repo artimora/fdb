@@ -46,11 +46,6 @@ function getApp(options: MountingOptions, fdb: fdb) {
 			"/write",
 			routes.file.text.write.handle,
 			describeRoute(routes.file.text.write.spec),
-		)
-		.patch(
-			"/append",
-			routes.file.text.append.handle,
-			describeRoute(routes.file.text.append.spec),
 		);
 
 	const fileBytes = new Hono()
@@ -63,11 +58,6 @@ function getApp(options: MountingOptions, fdb: fdb) {
 			"/write",
 			routes.file.bytes.write.handle,
 			describeRoute(routes.file.bytes.write.spec),
-		)
-		.patch(
-			"/append",
-			routes.file.bytes.append.handle,
-			describeRoute(routes.file.bytes.append.spec),
 		);
 
 	const fileBase = new Hono()

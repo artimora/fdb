@@ -8,14 +8,9 @@ export type MaybePromise<T> = Promise<T> | T;
 // potential for input, nullable for output
 export type FileOperations = {
 	writeAllText: (path: Potential<string>, text: string) => MaybePromise<void>;
-	appendAllText: (path: Potential<string>, text: string) => MaybePromise<void>;
 	readAllText: (path: Potential<string>) => MaybePromise<string>;
 
 	writeAllBytes: (
-		path: Potential<string>,
-		bytes: Uint8Array,
-	) => MaybePromise<void>;
-	appendAllBytes: (
 		path: Potential<string>,
 		bytes: Uint8Array,
 	) => MaybePromise<void>;

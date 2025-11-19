@@ -43,14 +43,6 @@ export default function getFileOperations(
 				throw new FileNotFoundError("Path is undefined");
 			await this.writeAllBytes(path, new TextEncoder().encode(text));
 		},
-		appendAllText: async function (
-			path: string | undefined,
-			text: string,
-		): Promise<void> {
-			if (path === undefined || path === "")
-				throw new FileNotFoundError("Path is undefined");
-			await this.create(path);
-		},
 		readAllText: async function (path: string | undefined): Promise<string> {
 			if (path === undefined || path === "")
 				throw new FileNotFoundError("Path is undefined");
@@ -76,14 +68,6 @@ export default function getFileOperations(
 				.where("name", "=", name)
 				.where("parent_folder", "is", parentId)
 				.executeTakeFirst();
-		},
-		appendAllBytes: async function (
-			path: string | undefined,
-			bytes: Uint8Array,
-		): Promise<void> {
-			if (path === undefined || path === "")
-				throw new FileNotFoundError("Path is undefined");
-			await this.create(path);
 		},
 		readAllBytes: async function (
 			path: string | undefined,
