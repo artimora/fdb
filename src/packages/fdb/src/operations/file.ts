@@ -16,7 +16,9 @@ export default function getFileOperations(
 		const parent = hasParent
 			? split.slice(0, split.length - 1).join("/")
 			: null;
+
 		const parentId = await directory.getFolderId(parent);
+
 		const name = (
 			hasParent
 				? split[split.length - 1]
@@ -48,7 +50,8 @@ export default function getFileOperations(
 				throw new FileNotFoundError("Path is undefined");
 			await this.create(path);
 
-			return "";
+			const bytes = await this.readAllBytes(path);
+			return new TextDecoder().decode(bytes);
 		},
 		writeAllBytes: async function (
 			path: string | undefined,
@@ -67,6 +70,7 @@ export default function getFileOperations(
 				})
 				.where("name", "=", name)
 				.where("parent_folder", "is", parentId)
+				.where("workspace_uuid", "=", "default")
 				.executeTakeFirst();
 		},
 		readAllBytes: async function (
@@ -74,9 +78,30 @@ export default function getFileOperations(
 		): Promise<Uint8Array> {
 			if (path === undefined || path === "")
 				throw new FileNotFoundError("Path is undefined");
+
 			await this.create(path);
 
-			return new Uint8Array();
+			const { parentId, name } = await getPathInfo(path);
+
+			const rawData = await db
+				.selectFrom("files")
+				.select(["data"])
+				.where("name", "=", name)
+				.where("parent_folder", "is", parentId)
+				.where("workspace_uuid", "=", "default")
+				.executeTakeFirst();
+
+			if (rawData === undefined) {
+				return new Uint8Array([]);
+			}
+
+			const data = rawData.data;
+
+			if (data === null) {
+				return new Uint8Array([]);
+			}
+
+			return data;
 		},
 		create: async function (path: string | undefined): Promise<void> {
 			if (path === undefined || path === "")

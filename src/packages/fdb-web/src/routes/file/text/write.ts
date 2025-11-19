@@ -39,5 +39,27 @@ export default createRoute(
 				description: "Path where the text will be written",
 			},
 		],
+		responses: {
+			200: {
+				description: "File was successfully written to",
+				content: {
+					"application/json": {
+						schema: {
+							type: "boolean",
+						},
+					},
+				},
+			},
+			400: {
+				description: "File attempted to be written to does not exist",
+				content: {
+					"application/json": {
+						schema: {
+							type: "boolean",
+						},
+					},
+				},
+			},
+		},
 	},
 );

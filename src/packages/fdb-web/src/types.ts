@@ -18,9 +18,15 @@ export type APICallbackContext =
 	// biome-ignore lint/suspicious/noExplicitAny: hono type mimc
 	Context<BlankEnv, string, any> | Context<BlankEnv, string, BlankInput>;
 
+// hono mimic type
+type Data = string | ArrayBuffer | ReadableStream | Uint8Array<ArrayBuffer>;
+
 export type APICallbackResponse = Response &
 	(
-		| TypedResponse<string, ContentfulStatusCode, "text">
+		| TypedResponse<Data, ContentfulStatusCode, "text">
+		| TypedResponse<Data, ContentfulStatusCode, "body">
+		// biome-ignore lint/suspicious/noExplicitAny: generic
+		| TypedResponse<Data, ContentfulStatusCode, any>
 		// biome-ignore lint/suspicious/noExplicitAny: generic
 		| JSONRespondReturn<any, ContentfulStatusCode>
 	);

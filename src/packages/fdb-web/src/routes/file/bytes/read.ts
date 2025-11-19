@@ -1,11 +1,61 @@
-import { createRoute } from "../../../main";
+import { FileNotFoundError } from "@copperdevs/fdb";
+import { createRoute, getFDB } from "../../../main";
 
 export default createRoute(
-	(c) => {
-		return c.text("read");
+	async (c) => {
+		const fdb = getFDB(c);
+
+		const path = c.req.query("path");
+
+		try {
+			const text = await fdb.file.readAllBytes(path);
+			c.header("Content-Type", "application/octet-stream");
+			return c.body(new Uint8Array(text));
+		} catch (error) {
+			if (error instanceof FileNotFoundError) {
+				c.status(400);
+				return c.json(false);
+			}
+		}
+
+		// this could have a better return maybe?
+		c.status(400);
+		return c.json(false);
 	},
 	{
 		summary: "Read Bytes",
 		tags: ["File (Bytes)"],
+
+		parameters: [
+			{
+				name: "path",
+				in: "query",
+				description: "Status values that need to be searched for",
+				required: true,
+				schema: {
+					type: "string",
+				},
+			},
+		],
+		responses: {
+			200: {
+				description: "File was successfully read",
+				content: {
+					"application/octet-stream": {
+						schema: {},
+					},
+				},
+			},
+			400: {
+				description: "File attempting to be read doesn't exist",
+				content: {
+					"application/json": {
+						schema: {
+							type: "boolean",
+						},
+					},
+				},
+			},
+		},
 	},
 );
