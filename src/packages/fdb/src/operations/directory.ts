@@ -1,9 +1,14 @@
 import { randomUUID } from "node:crypto";
+import path from "node:path";
 import type { Kysely } from "kysely";
 import { DirectoryNotFoundError } from "../errors";
 import type {
+	DirectoryDeleteOptions,
+	DirectoryGetOptions,
 	DirectoryOperations,
 	FDB,
+	FilesTable,
+	FoldersTable,
 	Maybe,
 	Nullable,
 	Potential,
@@ -54,8 +59,16 @@ export default function getDirectoryOperations(
 				}
 			}
 		},
-		delete: (path: Potential<string>): void => {
-			throw new Error("Function not implemented.");
+		delete: async function (options: DirectoryDeleteOptions): Promise<void> {
+			if (path === undefined)
+				throw new DirectoryNotFoundError("Path is undefined");
+
+			if (!(await this.exists(options.path)))
+				throw new DirectoryNotFoundError("Directory doesn't exist");
+
+			const id = await this.getFolderId(options.path);
+
+			await db.deleteFrom("folders").where("uuid", "=", id).execute();
 		},
 		exists: async (path: Maybe<string>): Promise<boolean> => {
 			if (path === null) return false;
@@ -84,19 +97,80 @@ export default function getDirectoryOperations(
 
 			return true;
 		},
-		getFiles: async function (path: Potential<string>): Promise<string[]> {
-			if (path === undefined)
-				throw new DirectoryNotFoundError("Path is undefined");
+		getFiles: async function (
+			options: DirectoryGetOptions,
+		): Promise<FilesTable[]> {
+			options.recursive ??= true;
 
-			const id = await this.getFolderId(path);
+			const files: FilesTable[] = [];
+			const folders: FoldersTable[] = await this.getFolders(options);
 
-			const files = await db
-				.selectFrom("files")
-				.select(["uuid"])
-				.where("parent_folder", "is", id)
-				.execute();
+			for (const folder of folders) {
+				const row: FilesTable[] = await db
+					.selectFrom("files")
+					.selectAll()
+					.where("parent_folder", "is", folder.uuid)
+					.execute();
 
-			return files.map((f) => f.uuid);
+				files.push(...row);
+			}
+
+			return files;
+		},
+		getFolders: async function (
+			options: DirectoryGetOptions,
+		): Promise<FoldersTable[]> {
+			options.recursive ??= true;
+
+			// Helper to get a folder by its uuid
+			async function getFolderById(
+				uuid: Nullable<string>,
+			): Promise<FoldersTable | null> {
+				if (uuid == null) return null;
+				const folder = await db
+					.selectFrom("folders")
+					.selectAll()
+					.where("uuid", "=", uuid)
+					.executeTakeFirst();
+				return folder ?? null;
+			}
+
+			async function get(parent: Nullable<string>): Promise<FoldersTable[]> {
+				const rawFolders = await db
+					.selectFrom("folders")
+					.selectAll()
+					.where("parent_folder", "is", parent)
+					.execute();
+
+				const folders: FoldersTable[] = [];
+
+				for (const folder of rawFolders) {
+					folders.push(folder);
+					if (options.recursive) {
+						folders.push(...(await get(folder.uuid)));
+					}
+				}
+
+				return folders;
+			}
+
+			const folderId = await this.getFolderId(
+				options.path === undefined ? null : options.path,
+			);
+
+			const folders: FoldersTable[] = [];
+
+			// Optionally include the root folder itself if it exists
+			if (options.path !== undefined && folderId !== null) {
+				const rootFolder = await getFolderById(folderId);
+				if (rootFolder) {
+					folders.push(rootFolder);
+				}
+			}
+
+			folders.push(...(await get(folderId)));
+
+			return folders;
 		},
 		getFolderId: async (path: Maybe<string>): Promise<Nullable<string>> => {
 			if (path === null) return null;

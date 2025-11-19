@@ -9,7 +9,7 @@ export default createRoute(
 			path: c.req.query("path"),
 			recursive: JSON.parse(c.req.query("recursive") ?? "true"),
 		};
-		const files = await fdb.directory.getFiles(options);
+		const files = await fdb.directory.getFolders(options);
 
 		if (files === null) {
 			c.status(404);
@@ -19,7 +19,7 @@ export default createRoute(
 		return c.json(files);
 	},
 	{
-		summary: "Get Files",
+		summary: "Get Folders",
 		tags: ["Directory"],
 
 		parameters: [
@@ -43,7 +43,7 @@ export default createRoute(
 		],
 		responses: {
 			200: {
-				description: "Files for given directory were retrieved successfully",
+				description: "Folders for given directory were retrieved successfully",
 				content: {
 					"application/json": {
 						schema: {
@@ -55,7 +55,6 @@ export default createRoute(
 									name: { type: "string" },
 									workspace_uuid: { type: "string" },
 									parent_folder: { type: "string" },
-									data: { type: "string", format: "byte" },
 								},
 							},
 						},
@@ -63,7 +62,7 @@ export default createRoute(
 				},
 			},
 			404: {
-				description: "Files for given directory were not found",
+				description: "Folders for given directory were not found",
 				content: {
 					"application/json": {
 						schema: {

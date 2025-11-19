@@ -3,6 +3,7 @@ import { default as directoryDelete } from "./directory/delete";
 import { default as directoryExists } from "./directory/exists";
 import { default as directoryFiles } from "./directory/files";
 import { default as directoryFolderId } from "./directory/folderId";
+import { default as directoryFolders } from "./directory/folders";
 import { default as fileBytesRead } from "./file/bytes/read";
 import { default as fileBytesWrite } from "./file/bytes/write";
 import { default as fileCopy } from "./file/copy";
@@ -36,6 +37,7 @@ export default {
 		exists: directoryExists,
 		files: directoryFiles,
 		folderId: directoryFolderId,
+		folders: directoryFolders,
 	},
 	root: root,
 };

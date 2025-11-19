@@ -5,12 +5,22 @@ export type Maybe<T> = T | undefined | null;
 
 export type MaybePromise<T> = Promise<T> | T;
 
-export type MoveOptions = {
+export type FileMoveOptions = {
 	originalPath: Potential<string>;
 	newPath: Potential<string>;
 
 	overwrite: Potential<boolean>;
 	createDirectories: Potential<boolean>;
+};
+
+export type DirectoryDeleteOptions = {
+	path: Potential<string>;
+	onlyOnEmpty: Potential<boolean>;
+};
+
+export type DirectoryGetOptions = {
+	path: Potential<string>;
+	recursive: Potential<boolean>;
 };
 
 // potential for input, nullable for output
@@ -26,32 +36,33 @@ export type FileOperations = {
 
 	create: (path: Potential<string>) => MaybePromise<void>;
 	exists: (path: Potential<string>) => MaybePromise<boolean>;
-	copy: (options: MoveOptions) => MaybePromise<void>;
-	move: (options: MoveOptions) => MaybePromise<void>;
+	copy: (options: FileMoveOptions) => MaybePromise<void>;
+	move: (options: FileMoveOptions) => MaybePromise<void>;
 	delete: (path: Potential<string>) => MaybePromise<void>;
 };
 
 export type DirectoryOperations = {
 	create: (path: Potential<string>) => MaybePromise<void>;
-	delete: (path: Potential<string>) => MaybePromise<void>;
+	delete: (options: DirectoryDeleteOptions) => MaybePromise<void>;
 	exists: (path: Maybe<string>) => MaybePromise<boolean>;
-	getFiles: (path: Potential<string>) => MaybePromise<string[]>; // TODO: add filter option and subdirectories option
+	getFiles: (options: DirectoryGetOptions) => MaybePromise<FilesTable[]>; // TODO: add filter option and subdirectories option
 	getFolderId: (path: Maybe<string>) => MaybePromise<Nullable<string>>;
+	getFolders: (options: DirectoryGetOptions) => MaybePromise<FoldersTable[]>;
 };
 
 export interface FoldersTable {
-	uuid: string; // PK
-	name: string; // not null
-	workspace_uuid: string; // not null
-	parent_folder: string | null; // nullable FK → folders.uuid
+	uuid: string;
+	name: string;
+	workspace_uuid: string;
+	parent_folder: string | null;
 }
 
 export interface FilesTable {
-	uuid: string; // PK
-	name: string; // not null
-	data: Uint8Array | null; // blob → Uint8Array (Kysely convention)
-	workspace_uuid: string; // not null
-	parent_folder: string | null; // nullable FK → folders.uuid
+	uuid: string;
+	name: string;
+	workspace_uuid: string;
+	parent_folder: string | null;
+	data: Uint8Array<ArrayBufferLike> | null;
 }
 
 export interface FDB {

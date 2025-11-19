@@ -113,6 +113,11 @@ function getApp(options: MountingOptions, fdb: fdb) {
 			describeRoute(routes.directory.files.spec),
 		)
 		.get(
+			"/folders",
+			routes.directory.folders.handle,
+			describeRoute(routes.directory.folders.spec),
+		)
+		.get(
 			"/id",
 			routes.directory.folderId.handle,
 			describeRoute(routes.directory.folderId.spec),

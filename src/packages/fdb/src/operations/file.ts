@@ -4,8 +4,8 @@ import { FileNotFoundError } from "../errors";
 import type {
 	DirectoryOperations,
 	FDB,
+	FileMoveOptions,
 	FileOperations,
-	MoveOptions,
 } from "../types";
 import { cleanPath, splitPath } from "../util";
 
@@ -150,7 +150,7 @@ export default function getFileOperations(
 			return row !== undefined && row !== null;
 		},
 
-		copy: async function (options: MoveOptions): Promise<void> {
+		copy: async function (options: FileMoveOptions): Promise<void> {
 			options.overwrite ??= true;
 			options.createDirectories ??= true;
 
@@ -197,7 +197,7 @@ export default function getFileOperations(
 				.where("workspace_uuid", "=", "default")
 				.executeTakeFirst();
 		},
-		move: async function (options: MoveOptions): Promise<void> {
+		move: async function (options: FileMoveOptions): Promise<void> {
 			await this.copy(options);
 			await this.delete(options.originalPath);
 		},

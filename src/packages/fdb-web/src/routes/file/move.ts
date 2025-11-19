@@ -1,4 +1,4 @@
-import { FileNotFoundError, type MoveOptions } from "@copperdevs/fdb";
+import { type FileMoveOptions, FileNotFoundError } from "@copperdevs/fdb";
 import { createRoute, getFDB } from "../../main";
 
 export default createRoute(
@@ -10,7 +10,7 @@ export default createRoute(
 		const overwrite = c.req.query("overwrite");
 		const createDirectories = c.req.query("createDirectories");
 
-		const options: MoveOptions = {
+		const options: FileMoveOptions = {
 			originalPath,
 			newPath,
 			overwrite: JSON.parse(overwrite ?? "true"),
