@@ -1,27 +1,30 @@
-export type PotentialString = string | undefined;
+export type Potential<T> = T | undefined;
+export type Nullable<T> = T | null;
+
+export type MaybePromise<T> = Promise<T> | T;
 
 export type FileOperations = {
-	writeAllText: (path: PotentialString, text: string) => void;
-	appendAllText: (path: PotentialString, text: string) => void;
-	readAllText: (path: PotentialString) => string;
+	writeAllText: (path: Potential<string>, text: string) => void;
+	appendAllText: (path: Potential<string>, text: string) => void;
+	readAllText: (path: Potential<string>) => string;
 
-	writeAllBytes: (path: PotentialString, bytes: Uint8Array) => void;
-	appendAllBytes: (path: PotentialString, bytes: Uint8Array) => void;
-	readAllBytes: (path: PotentialString) => Uint8Array;
+	writeAllBytes: (path: Potential<string>, bytes: Uint8Array) => void;
+	appendAllBytes: (path: Potential<string>, bytes: Uint8Array) => void;
+	readAllBytes: (path: Potential<string>) => Uint8Array;
 
-	create: (path: PotentialString) => void;
-	exists: (path: PotentialString) => boolean;
-	copy: (originalPath: PotentialString, newPath: PotentialString) => void;
-	move: (path: PotentialString, newPath: PotentialString) => void;
-	delete: (path: PotentialString) => void;
+	create: (path: Potential<string>) => void;
+	exists: (path: Potential<string>) => boolean;
+	copy: (originalPath: Potential<string>, newPath: Potential<string>) => void;
+	move: (path: Potential<string>, newPath: Potential<string>) => void;
+	delete: (path: Potential<string>) => void;
 };
 
 export type DirectoryOperations = {
-	create: (path: PotentialString) => void;
-	delete: (path: PotentialString) => void;
-	exists: (path: PotentialString) => Promise<boolean>;
-	getFiles: (path: PotentialString) => string[]; // TODO: add filter option and subdirectories option
-	getFolderId: (path: PotentialString) => PotentialString;
+	create: (path: Potential<string>) => void;
+	delete: (path: Potential<string>) => void;
+	exists: (path: Potential<string>) => MaybePromise<boolean>;
+	getFiles: (path: Potential<string>) => string[]; // TODO: add filter option and subdirectories option
+	getFolderId: (path: Potential<string>) => MaybePromise<Potential<string>>;
 };
 
 export interface FoldersTable {
