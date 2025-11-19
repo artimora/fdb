@@ -1,16 +1,22 @@
+import { splitPath } from "@copperdevs/fdb/src/util";
 import { createRoute, getFDB } from "../../main";
 
 export default createRoute(
 	async (c) => {
 		const fdb = getFDB(c);
 
-		const exists = await fdb.file.exists(c.req.query("path"));
+		const exists = await fdb.directory.getFolderId(c.req.query("path"));
+
+		if (exists === null) {
+			c.status(404);
+			return c.json(null);
+		}
 
 		return c.json(exists);
 	},
 	{
-		summary: "File Exists",
-		tags: ["File"],
+		summary: "Get Folder ID",
+		tags: ["Directory"],
 
 		parameters: [
 			{

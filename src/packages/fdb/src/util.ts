@@ -7,3 +7,11 @@ export function splitPath(path: string) {
 		.split(nodePath.sep)
 		.filter(Boolean);
 }
+
+export function cleanPath(path: string) {
+	// some bs lowkey
+	return path
+		.replaceAll("\\", nodePath.sep)
+		.replaceAll("/", nodePath.sep)
+		.replaceAll(nodePath.sep, "/");
+}

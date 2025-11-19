@@ -121,6 +121,11 @@ function getApp(options: MountingOptions, fdb: fdb) {
 			"/files",
 			routes.directory.files.handle,
 			describeRoute(routes.directory.files.spec),
+		)
+		.get(
+			"/id",
+			routes.directory.folderId.handle,
+			describeRoute(routes.directory.folderId.spec),
 		);
 
 	// mount

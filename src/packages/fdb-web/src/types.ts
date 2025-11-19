@@ -1,4 +1,5 @@
 import type { fdb } from "@copperdevs/fdb";
+import type { MaybePromise } from "@copperdevs/fdb/src/types";
 import type { Context, TypedResponse } from "hono";
 import type { BlankEnv, BlankInput } from "hono/types";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
@@ -20,12 +21,13 @@ export type APICallbackContext =
 export type APICallbackResponse = Response &
 	(
 		| TypedResponse<string, ContentfulStatusCode, "text">
-		| JSONRespondReturn<boolean, ContentfulStatusCode>
+		// biome-ignore lint/suspicious/noExplicitAny: generic
+		| JSONRespondReturn<any, ContentfulStatusCode>
 	);
 
 export type APICallback = (
 	c: APICallbackContext,
-) => Promise<APICallbackResponse> | APICallbackResponse;
+) => MaybePromise<APICallbackResponse>;
 
 export type APIRoute = {
 	handle: APICallback;

@@ -1,11 +1,31 @@
-import { createRoute } from "../../main";
+import { createRoute, getFDB } from "../../main";
 
 export default createRoute(
-	(c) => {
-		return c.text("create");
+	async (c) => {
+		const fdb = getFDB(c);
+
+		if (await fdb.file.exists(c.req.query("path"))) {
+			c.status(400);
+			return c.json(false);
+		}
+		fdb.file.create(c.req.query("path"));
+
+		return c.json(true);
 	},
 	{
 		summary: "Create File",
 		tags: ["File"],
+
+		parameters: [
+			{
+				name: "path",
+				in: "query",
+				description: "Status values of the path of the file to create",
+				required: true,
+				schema: {
+					type: "string",
+				},
+			},
+		],
 	},
 );

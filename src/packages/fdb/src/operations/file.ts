@@ -1,55 +1,141 @@
+import { randomUUID } from "node:crypto";
 import type { Kysely } from "kysely";
 import { FileNotFoundError } from "../errors";
 import type { DirectoryOperations, FDB, FileOperations } from "../types";
-import { splitPath } from "../util";
+import { cleanPath, splitPath } from "../util";
 
 export default function getFileOperations(
 	db: Kysely<FDB>,
 	directory: DirectoryOperations,
 ): FileOperations {
+	async function getPathInfo(path: string) {
+		const split = splitPath(path);
+
+		const hasParent = split.length > 1;
+
+		const parent = hasParent
+			? split.slice(0, split.length - 1).join("/")
+			: null;
+		const parentId = await directory.getFolderId(parent);
+		const name = (
+			hasParent
+				? split[split.length - 1]
+				: cleanPath(path).startsWith("/")
+					? path.slice(1)
+					: path
+		) as string;
+
+		return {
+			split,
+			hasParent,
+			parent,
+			parentId,
+			name,
+		};
+	}
+
 	return {
-		writeAllText: (path: string | undefined, text: string): void => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
-
-			const split = splitPath(path);
-
-			const hasFolder = split.length > 1;
-
-			let parentFolder: string | undefined;
-
-			if (hasFolder) {
-				directory.create(split.join("/"));
-			}
-
-			console.log("yes");
+		writeAllText: async function (
+			path: string | undefined,
+			text: string,
+		): Promise<void> {
+			if (path === undefined || path === "")
+				throw new FileNotFoundError("Path is undefined");
+			await this.writeAllBytes(path, new TextEncoder().encode(text));
 		},
-		appendAllText: (path: string | undefined, text: string): void => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
+		appendAllText: async function (
+			path: string | undefined,
+			text: string,
+		): Promise<void> {
+			if (path === undefined || path === "")
+				throw new FileNotFoundError("Path is undefined");
+			await this.create(path);
 		},
-		readAllText: (path: string | undefined): string => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
+		readAllText: async function (path: string | undefined): Promise<string> {
+			if (path === undefined || path === "")
+				throw new FileNotFoundError("Path is undefined");
+			await this.create(path);
 
 			return "";
 		},
-		writeAllBytes: (path: string | undefined, bytes: Uint8Array): void => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
+		writeAllBytes: async function (
+			path: string | undefined,
+			bytes: Uint8Array,
+		): Promise<void> {
+			if (path === undefined || path === "")
+				throw new FileNotFoundError("Path is undefined");
+			await this.create(path);
+
+			const { parentId, name } = await getPathInfo(path);
+
+			await db
+				.updateTable("files")
+				.set({
+					data: Buffer.from(bytes),
+				})
+				.where("name", "=", name)
+				.where("parent_folder", "is", parentId)
+				.executeTakeFirst();
 		},
-		appendAllBytes: (path: string | undefined, bytes: Uint8Array): void => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
+		appendAllBytes: async function (
+			path: string | undefined,
+			bytes: Uint8Array,
+		): Promise<void> {
+			if (path === undefined || path === "")
+				throw new FileNotFoundError("Path is undefined");
+			await this.create(path);
 		},
-		readAllBytes: (path: string | undefined): Uint8Array => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
+		readAllBytes: async function (
+			path: string | undefined,
+		): Promise<Uint8Array> {
+			if (path === undefined || path === "")
+				throw new FileNotFoundError("Path is undefined");
+			await this.create(path);
 
 			return new Uint8Array();
 		},
-		create: (path: string | undefined): void => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
-		},
-		exists: (path: string | undefined): boolean => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
+		create: async function (path: string | undefined): Promise<void> {
+			if (path === undefined || path === "")
+				throw new FileNotFoundError("Path is undefined");
+			if (await this.exists(path)) return; // direct checking if it already exists
 
-			return false;
+			let { hasParent, parent, parentId, name } = await getPathInfo(path);
+
+			if (hasParent && parent !== null) {
+				await directory.create(parent);
+				parentId = await directory.getFolderId(parent);
+			}
+
+			const id = randomUUID() as string;
+
+			await db
+				.insertInto("files")
+				.values({
+					uuid: id,
+					name: name,
+					workspace_uuid: "default",
+					parent_folder: parentId,
+				})
+				.execute();
 		},
+		exists: async (path: string | undefined): Promise<boolean> => {
+			if (!path) return false;
+
+			const { parentId, name } = await getPathInfo(path);
+
+			if (parentId === undefined) return false;
+
+			const row = await db
+				.selectFrom("files")
+				.select(["uuid"])
+				.where("name", "=", name)
+				.where("workspace_uuid", "=", "default")
+				.where("parent_folder", "is", parentId)
+				.executeTakeFirst();
+
+			return row !== undefined && row !== null;
+		},
+
 		copy: (
 			originalPath: string | undefined,
 			newPath: string | undefined | undefined,
@@ -60,10 +146,12 @@ export default function getFileOperations(
 				throw new FileNotFoundError("New path is undefined");
 		},
 		move: (path: string | undefined): void => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
+			if (path === undefined || path === "")
+				throw new FileNotFoundError("Path is undefined");
 		},
 		delete: (path: string | undefined): void => {
-			if (path === undefined) throw new FileNotFoundError("Path is undefined");
+			if (path === undefined || path === "")
+				throw new FileNotFoundError("Path is undefined");
 		},
 	};
 }
