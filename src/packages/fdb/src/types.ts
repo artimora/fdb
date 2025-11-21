@@ -23,6 +23,8 @@ export type DirectoryGetOptions = {
 	recursive: Potential<boolean>;
 };
 
+export type FileGetOptions = { data: Potential<boolean> } & DirectoryGetOptions;
+
 // potential for input, nullable for output
 export type FileOperations = {
 	writeAllText: (path: Potential<string>, text: string) => MaybePromise<void>;
@@ -45,7 +47,7 @@ export type DirectoryOperations = {
 	create: (path: Potential<string>) => MaybePromise<void>;
 	delete: (options: DirectoryDeleteOptions) => MaybePromise<void>;
 	exists: (path: Maybe<string>) => MaybePromise<boolean>;
-	getFiles: (options: DirectoryGetOptions) => MaybePromise<FilesTable[]>; // TODO: add filter option and subdirectories option
+	getFiles: (options: FileGetOptions) => MaybePromise<FilesTable[]>; // TODO: add filter option and subdirectories option
 	getFolderId: (path: Maybe<string>) => MaybePromise<Nullable<string>>;
 	getFolders: (options: DirectoryGetOptions) => MaybePromise<FoldersTable[]>;
 };
