@@ -42,6 +42,9 @@
       "dependencies": {
         "kysely": "^0.28.8",
       },
+      "devDependencies": {
+        "@types/bun": "^1.2.12",
+      },
     },
     "src/packages/fdb-web": {
       "name": "@copperdevs/fdb-web",

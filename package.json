@@ -6,17 +6,6 @@
     "src/packages/**",
     "src/apps/**"
   ],
-  "packageManager": "bun@1.21.1",
-  "devEngines": {
-    "packageManager": {
-      "name": "bun",
-      "version": "1.21.1"
-    },
-    "runtime": {
-      "name": "bun",
-      "version": "1.21.1"
-    }
-  },
   "dependencies": {
     "typescript": "^5.9.3"
   },

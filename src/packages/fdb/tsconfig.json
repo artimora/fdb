@@ -1,8 +1,20 @@
 {
-  "extends": "../../../tsconfig.json",
   "compilerOptions": {
-    "outFile": "./dist/main.js",
-    "rootDir": "./src"
+    "resolveJsonModule": true,
+    "preserveSymlinks": true,
+    "target": "ES2021",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "declaration": true,
+    "noEmit": true,
+
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
   },
-  "exclude": ["./dist/**"]
+  "exclude": ["node_modules"]
 }
