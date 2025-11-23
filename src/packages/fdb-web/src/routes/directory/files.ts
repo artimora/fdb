@@ -1,13 +1,14 @@
-import type { DirectoryGetOptions } from "@copperdevs/fdb";
+import type { FileGetOptions } from "@copperdevs/fdb";
 import { createRoute, getFDB } from "../../main";
 
 export default createRoute(
 	async (c) => {
 		const fdb = getFDB(c);
 
-		const options: DirectoryGetOptions = {
+		const options: FileGetOptions = {
 			path: c.req.query("path"),
 			recursive: JSON.parse(c.req.query("recursive") ?? "true"),
+			data: JSON.parse(c.req.query("data") ?? "false"),
 		};
 		const files = await fdb.directory.getFiles(options);
 
@@ -38,6 +39,15 @@ export default createRoute(
 				schema: {
 					type: "boolean",
 					default: true,
+				},
+			},
+			{
+				name: "data",
+				in: "query",
+				description: "Whether to include file data",
+				schema: {
+					type: "boolean",
+					default: false,
 				},
 			},
 		],

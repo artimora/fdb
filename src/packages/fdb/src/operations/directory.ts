@@ -7,6 +7,7 @@ import type {
 	DirectoryGetOptions,
 	DirectoryOperations,
 	FDB,
+	FileGetOptions,
 	FilesTable,
 	FoldersTable,
 	Maybe,
@@ -97,22 +98,63 @@ export default function getDirectoryOperations(
 
 			return true;
 		},
-		getFiles: async function (
-			options: DirectoryGetOptions,
-		): Promise<FilesTable[]> {
+		getFiles: async function (options: FileGetOptions): Promise<FilesTable[]> {
 			options.recursive ??= true;
+			options.data ??= false;
 
 			const files: FilesTable[] = [];
-			const folders: FoldersTable[] = await this.getFolders(options);
 
-			for (const folder of folders) {
-				const row: FilesTable[] = await db
-					.selectFrom("files")
-					.selectAll()
-					.where("parent_folder", "is", folder.uuid)
+			if ([undefined, "/", ""].includes(options.path)) {
+				// all files, so get all
+
+				const dbFiles = db.selectFrom("files");
+
+				// biome-ignore lint/suspicious/noExplicitAny: selection
+				let selected: any;
+
+				if (options.data) {
+					selected = dbFiles.selectAll();
+				} else {
+					selected = dbFiles.select([
+						"name",
+						"uuid",
+						"workspace_uuid",
+						"parent_folder",
+					]);
+				}
+
+				const rows = await selected.execute();
+
+				files.push(...(rows as FilesTable[]));
+			} else {
+				// subset of files only
+				const folders: FoldersTable[] = await this.getFolders(options);
+
+				const dbFiles = db.selectFrom("files");
+
+				// biome-ignore lint/suspicious/noExplicitAny: selection
+				let selected: any;
+
+				if (options.data) {
+					selected = dbFiles.selectAll();
+				} else {
+					selected = dbFiles.select([
+						"name",
+						"uuid",
+						"workspace_uuid",
+						"parent_folder",
+					]);
+				}
+
+				const rows = await selected
+					.where(
+						"parent_folder",
+						"in",
+						folders.map((f) => f.uuid),
+					)
 					.execute();
 
-				files.push(...row);
+				files.push(...rows);
 			}
 
 			return files;
