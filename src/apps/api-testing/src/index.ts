@@ -21,7 +21,7 @@ await migrateToLatest(db);
 
 const fileDB = getHandler(createFDB(db));
 
-const app = new Hono()
+const app: Hono = new Hono()
 	.use(logger())
 	.get(
 		"/",

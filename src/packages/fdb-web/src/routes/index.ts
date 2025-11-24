@@ -1,3 +1,4 @@
+import type { APIRoute } from "../types";
 import { default as directoryCreate } from "./directory/create";
 import { default as directoryDelete } from "./directory/delete";
 import { default as directoryExists } from "./directory/exists";
@@ -15,7 +16,32 @@ import { default as fileTextRead } from "./file/text/read";
 import { default as fileTextWrite } from "./file/text/write";
 import { default as root } from "./root";
 
-export default {
+const roots: {
+	file: {
+		bytes: {
+			read: APIRoute;
+			write: APIRoute;
+		};
+		text: {
+			read: APIRoute;
+			write: APIRoute;
+		};
+		copy: APIRoute;
+		create: APIRoute;
+		delete: APIRoute;
+		exists: APIRoute;
+		move: APIRoute;
+	};
+	directory: {
+		create: APIRoute;
+		delete: APIRoute;
+		exists: APIRoute;
+		files: APIRoute;
+		folderId: APIRoute;
+		folders: APIRoute;
+	};
+	root: APIRoute;
+} = {
 	file: {
 		bytes: {
 			read: fileBytesRead,
@@ -41,3 +67,5 @@ export default {
 	},
 	root: root,
 };
+
+export default roots;

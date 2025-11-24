@@ -2,7 +2,7 @@ import { getProvider } from "@artimora/fdb";
 import { type Kysely, Migrator } from "kysely";
 
 // biome-ignore lint/suspicious/noExplicitAny: generic function
-export async function migrateToLatest(db: Kysely<any>) {
+export async function migrateToLatest(db: Kysely<any>): Promise<void> {
 	const migrator = new Migrator({
 		db,
 		provider: getProvider(),

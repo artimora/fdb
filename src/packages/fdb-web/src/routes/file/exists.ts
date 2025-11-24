@@ -1,4 +1,5 @@
 import { createRoute, getFDB } from "../../main";
+import type { APIRoute } from "../../types";
 
 export default createRoute(
 	async (c) => {
@@ -24,4 +25,4 @@ export default createRoute(
 			},
 		],
 	},
-);
+) satisfies APIRoute as APIRoute;
