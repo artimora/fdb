@@ -6,8 +6,12 @@
     "**/package-lock.json": true,
     "**/.zed": true,
     "**/.rules": true,
-    // "**/dist": true,
-    "**/.nvmrc": true
+    "**/dist": true,
+    "**/.nvmrc": true,
+    "src/packages/**/LICENSE": true,
+    "src/packages/**/README.md": true,
+    "src/apps/**/LICENSE": true,
+    "src/apps/**/README.md": true
   },
   "editor.defaultFormatter": "biomejs.biome",
   "[javascript][typescript][javascriptreact][typescriptreact][json][jsonc][css][graphql]": {
@@ -32,12 +36,12 @@
   },
   "[astro]": {
     "editor.defaultFormatter": "astro-build.astro-vscode"
-  },
+  }
 
-  "json.schemas": [
-    {
-      "url": "https://cdn.jsdelivr.net/npm/tsup/schema.json",
-      "fileMatch": ["package.json", "tsup.config.json"]
-    }
-  ]
+  // "json.schemas": [
+  //   {
+  //     "url": "https://cdn.jsdelivr.net/npm/tsup/schema.json",
+  //     "fileMatch": ["package.json", "tsup.config.json"]
+  //   }
+  // ]
 }

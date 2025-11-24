@@ -37,3 +37,9 @@ fdb.db
 fdb.migrations.txt
 db.sqlite
 db.sqlite*
+
+src/packages/**/LICENSE
+src/packages/**/README.md
+
+src/apps/**/LICENSE
+src/apps/**/README.md

@@ -1,4 +1,4 @@
-import type { DirectoryGetOptions } from "@copperdevs/fdb";
+import type { DirectoryGetOptions } from "@artimora/fdb";
 import { createRoute, getFDB } from "../../main";
 
 export default createRoute(

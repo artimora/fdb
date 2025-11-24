@@ -1,4 +1,4 @@
-import { type FileMoveOptions, FileNotFoundError } from "@copperdevs/fdb";
+import { type FileMoveOptions, FileNotFoundError } from "@artimora/fdb";
 import { createRoute, getFDB } from "../../main";
 
 export default createRoute(

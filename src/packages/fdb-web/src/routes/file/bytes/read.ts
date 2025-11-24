@@ -1,4 +1,4 @@
-import { FileNotFoundError } from "@copperdevs/fdb";
+import { FileNotFoundError } from "@artimora/fdb";
 import { createRoute, getFDB } from "../../../main";
 
 export default createRoute(

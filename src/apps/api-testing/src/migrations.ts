@@ -1,4 +1,4 @@
-import { getProvider } from "@copperdevs/fdb";
+import { getProvider } from "@artimora/fdb";
 import { type Kysely, Migrator } from "kysely";
 
 // biome-ignore lint/suspicious/noExplicitAny: generic function

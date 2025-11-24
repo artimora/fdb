@@ -1,5 +1,5 @@
 import { Database } from "bun:sqlite";
-import { createFDB } from "@copperdevs/fdb";
+import { createFDB } from "@artimora/fdb";
 import { Kysely } from "kysely";
 import { BunSqliteDialect } from "kysely-bun-sqlite";
 import { migrateToLatest } from "./migrations";

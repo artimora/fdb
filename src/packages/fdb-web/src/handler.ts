@@ -1,4 +1,4 @@
-import type { fdb } from "@copperdevs/fdb";
+import type { fdb } from "@artimora/fdb";
 import { Hono } from "hono/quick";
 import { describeRoute, openAPIRouteHandler } from "hono-openapi";
 import routes from "./routes";

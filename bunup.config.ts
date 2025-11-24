@@ -3,7 +3,7 @@ import { copy } from "bunup/plugins";
 
 export default defineWorkspace([
 	{
-		name: "@copperdevs/fdb",
+		name: "@artimora/fdb",
 		root: "src/packages/fdb",
 		config: {
 			minify: true,
@@ -11,11 +11,11 @@ export default defineWorkspace([
 			unused: {
 				level: "error",
 			},
-			plugins: [copy(["../../../README.md", "../../../LICENSE"])],
+			plugins: [copy(["../../../README.md", "../../../LICENSE"]).to("../")],
 		},
 	},
 	{
-		name: "@copperdevs/fdb-web",
+		name: "@artimora/fdb-web",
 		root: "src/packages/fdb-web",
 		config: {
 			minify: true,
@@ -23,7 +23,7 @@ export default defineWorkspace([
 			unused: {
 				level: "error",
 			},
-			plugins: [copy(["../../../README.md", "../../../LICENSE"])],
+			plugins: [copy(["../../../README.md", "../../../LICENSE"]).to("../")],
 		},
 	},
 	{

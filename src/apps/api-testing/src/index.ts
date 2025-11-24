@@ -1,6 +1,6 @@
 import { Database } from "bun:sqlite";
-import { createFDB, getProvider } from "@copperdevs/fdb";
-import { getHandler } from "@copperdevs/fdb-web";
+import { createFDB, getProvider } from "@artimora/fdb";
+import { getHandler } from "@artimora/fdb-web";
 import { Scalar } from "@scalar/hono-api-reference";
 import { Hono } from "hono";
 import { logger } from "hono/logger";

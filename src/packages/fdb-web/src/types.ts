@@ -1,5 +1,4 @@
-import type { fdb } from "@copperdevs/fdb";
-import type { MaybePromise } from "@copperdevs/fdb/src/types";
+import type { fdb, MaybePromise } from "@artimora/fdb";
 import type { Context, TypedResponse } from "hono";
 import type { BlankEnv, BlankInput } from "hono/types";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
