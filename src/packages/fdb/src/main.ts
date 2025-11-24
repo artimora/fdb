@@ -13,8 +13,6 @@ export class fdb {
 	public file: FileOperations;
 	public directory: DirectoryOperations;
 
-	test(): void {}
-
 	constructor(db: Kysely<FDB>) {
 		this.db = db;
 		this.directory = getDirectoryOperations(this.db);
