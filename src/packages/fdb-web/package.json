@@ -1,5 +1,5 @@
 {
-    "name": "@copperdevs/fdb-web",
+    "name": "@artimora/fdb-web",
     "description": "file system emulated in a database, now web api connected",
     "version": "1.0.0",
     "type": "module",
@@ -25,10 +25,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/copperdevs/fdb"
+        "url": "https://github.com/artimora/fdb"
     },
-    "bugs": "https://github.com/copperdevs/fdb/issues",
-    "homepage": "https://github.com/copperdevs/fdb",
+    "bugs": "https://github.com/artimora/fdb/issues",
+    "homepage": "https://github.com/artimora/fdb",
     "keywords": [
         "typescript",
         "web",
@@ -38,7 +38,7 @@
     ],
     "license": "MIT",
     "dependencies": {
-        "@copperdevs/fdb": "workspace:*",
+        "@artimora/fdb": "workspace:*",
         "hono": "^4.10.3",
         "hono-openapi": "^1.1.1"
     },

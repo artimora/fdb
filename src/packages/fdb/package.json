@@ -1,5 +1,5 @@
 {
-    "name": "@copperdevs/fdb",
+    "name": "@artimora/fdb",
     "description": "file system emulated in a database",
     "version": "1.0.0",
     "type": "module",
@@ -25,10 +25,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/copperdevs/fdb"
+        "url": "https://github.com/artimora/fdb"
     },
-    "bugs": "https://github.com/copperdevs/fdb/issues",
-    "homepage": "https://github.com/copperdevs/fdb",
+    "bugs": "https://github.com/artimora/fdb/issues",
+    "homepage": "https://github.com/artimora/fdb",
     "keywords": [
         "typescript",
         "web",

@@ -24,7 +24,7 @@
         }
     },
     "dependencies": {
-        "@copperdevs/fdb": "workspace:*",
+        "@artimora/fdb": "workspace:*",
         "kysely-bun-sqlite": "^0.4.0"
     },
     "devDependencies": {
