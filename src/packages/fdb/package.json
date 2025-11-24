@@ -1,7 +1,7 @@
 {
     "name": "@artimora/fdb",
     "description": "file system emulated in a database",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "type": "module",
     "private": false,
     "files": [
