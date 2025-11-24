@@ -14,5 +14,6 @@ const db = new Kysely<any>({
 await migrateToLatest(db);
 
 const fileDB = createFDB(db);
+fileDB.test();
 
 fileDB.file.writeAllText("root/test/text.txt", "silly written text");

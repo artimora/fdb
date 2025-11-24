@@ -10,7 +10,7 @@ export class FDBMigrationProvider implements MigrationProvider {
 	}
 }
 
-export function getProvider() {
+export function getProvider(): FDBMigrationProvider {
 	return new FDBMigrationProvider();
 }
 
