@@ -1,4 +1,5 @@
 import { createRoute } from "../../main";
+import type { APIRoute } from "../../types";
 
 export default createRoute(
 	(c) => {
@@ -8,4 +9,4 @@ export default createRoute(
 		summary: "Delete Directory",
 		tags: ["Directory"],
 	},
-);
+) satisfies APIRoute as APIRoute;
