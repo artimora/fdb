@@ -1,8 +1,23 @@
 {
     "name": "@copperdevs/fdb-web",
-    "version": "1.0.0",
-    "private": false,
     "description": "file system emulated in a database, now web api connected",
+    "version": "1.0.0",
+    "type": "module",
+    "private": false,
+    "files": [
+        "dist"
+    ],
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        },
+        "./package.json": "./package.json"
+    },
     "author": {
         "name": "copperdevs",
         "url": "https://github.com/copperdevs",
@@ -22,20 +37,12 @@
         "api"
     ],
     "license": "MIT",
-    "type": "module",
     "dependencies": {
         "@copperdevs/fdb": "workspace:*",
-        "@hono/standard-validator": "^0.1.5",
         "hono": "^4.10.3",
         "hono-openapi": "^1.1.1"
     },
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        "./package.json": "./package.json",
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js"
-        }
+    "publishConfig": {
+        "access": "public"
     }
 }

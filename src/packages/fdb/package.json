@@ -1,8 +1,23 @@
 {
     "name": "@copperdevs/fdb",
-    "version": "1.0.0",
-    "private": false,
     "description": "file system emulated in a database",
+    "version": "1.0.0",
+    "type": "module",
+    "private": false,
+    "files": [
+        "dist"
+    ],
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        },
+        "./package.json": "./package.json"
+    },
     "author": {
         "name": "copperdevs",
         "url": "https://github.com/copperdevs",
@@ -20,20 +35,13 @@
         "server"
     ],
     "license": "MIT",
-    "type": "module",
     "dependencies": {
         "kysely": "^0.28.8"
     },
     "devDependencies": {
         "@types/bun": "^1.2.12"
     },
-    "main": "./dist/index.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        "./package.json": "./package.json",
-        ".": {
-            "types": "./dist/index.d.ts",
-            "import": "./dist/index.js"
-        }
+    "publishConfig": {
+        "access": "public"
     }
 }

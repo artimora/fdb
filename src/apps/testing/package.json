@@ -2,6 +2,16 @@
     "name": "testing",
     "version": "1.0.0",
     "type": "module",
+    "files": [
+        "dist"
+    ],
+    "module": "./dist/index.js",
+    "exports": {
+        ".": {
+            "import": "./dist/index.js"
+        },
+        "./package.json": "./package.json"
+    },
     "packageManager": "bun@1.21.1",
     "devEngines": {
         "packageManager": {

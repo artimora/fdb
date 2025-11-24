@@ -1,4 +1,5 @@
 import { defineWorkspace } from "bunup";
+import { copy } from "bunup/plugins";
 
 export default defineWorkspace([
 	{
@@ -10,6 +11,7 @@ export default defineWorkspace([
 			unused: {
 				level: "error",
 			},
+			plugins: [copy(["../../../README.md", "../../../LICENSE"])],
 		},
 	},
 	{
@@ -21,6 +23,7 @@ export default defineWorkspace([
 			unused: {
 				level: "error",
 			},
+			plugins: [copy(["../../../README.md", "../../../LICENSE"])],
 		},
 	},
 	{

@@ -2,6 +2,20 @@
     "name": "api-testing",
     "version": "1.0.0",
     "type": "module",
+    "files": [
+        "dist"
+    ],
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": {
+                "types": "./dist/index.d.ts",
+                "default": "./dist/index.js"
+            }
+        },
+        "./package.json": "./package.json"
+    },
     "packageManager": "bun@1.21.1",
     "devEngines": {
         "packageManager": {

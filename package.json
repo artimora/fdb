@@ -14,10 +14,7 @@
     "bunup": "^0.16.10"
   },
   "scripts": {
-    "dev:api": "bun run --bun --watch src/apps/api-testing/src/index.ts",
-    "dev:testing": "bun run --bun src/apps/testing/src/index.ts",
-    "build": "bunup",
-    "dev": "bunup --watch",
-    "type-check": "bun run --filter '*' type-check"
+    "build": "bunup  --exports",
+    "dev": "bunup --watch"
   }
 }
