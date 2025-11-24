@@ -15,6 +15,6 @@
   },
   "scripts": {
     "build": "bunup  --exports",
-    "dev": "bunup --watch"
+    "dev": "bunup --exports --watch"
   }
 }

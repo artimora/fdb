@@ -1,0 +1,12 @@
+{
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "declaration": true,
+    "isolatedDeclarations": true,
+  },
+  "include": [
+    "src/**/*",
+    "vite.config.ts"
+  ]
+}
