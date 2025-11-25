@@ -1,23 +1,24 @@
-import type { DirectoryGetOptions } from "@artimora/fdb";
+import { cleanPath, type DirectoryGetOptions } from "@artimora/fdb";
 import { createRoute, getFDB } from "../../main";
 import type { APIRoute } from "../../types";
 
 export default createRoute(
 	async (c) => {
 		const fdb = getFDB(c);
+		const path = cleanPath(c.req.query("path")!);
 
 		const options: DirectoryGetOptions = {
-			path: c.req.query("path"),
+			path,
 			recursive: JSON.parse(c.req.query("recursive") ?? "true"),
 		};
-		const files = await fdb.directory.getFolders(options);
+		const folders = await fdb.directory.getFolders(options);
 
-		if (files === null) {
+		if (folders === null) {
 			c.status(404);
 			return c.json(null);
 		}
 
-		return c.json(files);
+		return c.json(folders);
 	},
 	{
 		summary: "Get Folders",

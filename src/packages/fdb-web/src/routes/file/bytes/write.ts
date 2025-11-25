@@ -1,4 +1,4 @@
-import { FileNotFoundError } from "@artimora/fdb";
+import { cleanPath, FileNotFoundError } from "@artimora/fdb";
 import { createRoute, getFDB } from "../../../main";
 import type { APIRoute } from "../../../types";
 
@@ -6,7 +6,7 @@ export default createRoute(
 	async (c) => {
 		const fdb = getFDB(c);
 
-		const path = c.req.query("path");
+		const path = cleanPath(c.req.query("path")!);
 		const buffer = await c.req.arrayBuffer();
 
 		try {

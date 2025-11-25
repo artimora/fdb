@@ -1,15 +1,17 @@
+import { cleanPath } from "@artimora/fdb";
 import { createRoute, getFDB } from "../../main";
 import type { APIRoute } from "../../types";
 
 export default createRoute(
 	async (c) => {
 		const fdb = getFDB(c);
+		const path = cleanPath(c.req.query("path")!);
 
-		if (await fdb.file.exists(c.req.query("path"))) {
+		if (await fdb.file.exists(path)) {
 			c.status(400);
 			return c.json(false);
 		}
-		fdb.file.create(c.req.query("path"));
+		fdb.file.create(path);
 
 		return c.json(true);
 	},

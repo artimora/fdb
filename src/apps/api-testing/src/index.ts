@@ -7,6 +7,7 @@ import { logger } from "hono/logger";
 import { Kysely } from "kysely";
 import { BunSqliteDialect } from "kysely-bun-sqlite";
 import { migrateToLatest } from "./migrations";
+import { cors } from "hono/cors";
 
 getProvider();
 
@@ -23,6 +24,7 @@ const fileDB = getHandler(createFDB(db));
 
 const app: Hono = new Hono()
 	.use(logger())
+	.use('/api/*', cors())
 	.get(
 		"/",
 		Scalar({

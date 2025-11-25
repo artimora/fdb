@@ -1,4 +1,4 @@
-import { type FileMoveOptions, FileNotFoundError } from "@artimora/fdb";
+import { cleanPath, type FileMoveOptions, FileNotFoundError } from "@artimora/fdb";
 import { createRoute, getFDB } from "../../main";
 import type { APIRoute } from "../../types";
 
@@ -6,8 +6,8 @@ export default createRoute(
 	async (c) => {
 		const fdb = getFDB(c);
 
-		const originalPath = c.req.query("originalPath");
-		const newPath = c.req.query("newPath");
+		const originalPath = cleanPath(c.req.query("originalPath")!);
+		const newPath = cleanPath(c.req.query("newPath")!);
 		const overwrite = c.req.query("overwrite");
 		const createDirectories = c.req.query("createDirectories");
 
@@ -17,8 +17,6 @@ export default createRoute(
 			overwrite: JSON.parse(overwrite ?? "true"),
 			createDirectories: JSON.parse(createDirectories ?? "true"),
 		};
-
-		console.log(options);
 
 		try {
 			await fdb.file.copy(options);
