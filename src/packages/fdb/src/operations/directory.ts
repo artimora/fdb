@@ -102,68 +102,62 @@ export default function getDirectoryOperations(
       options.recursive ??= true;
       options.data ??= false;
 
-      const files: FilesTable[] = [];
+      let files: FilesTable[] = [];
 
-      if ([undefined, "/", ""].includes(options.path)) {
-        // all files, so get all
+      const rawFolders = await this.getFolders(options);
+      const uuids: (string | null)[] = rawFolders.map((f) => f.uuid);
 
-        const dbFiles = db.selectFrom("files");
+      const current = await this.getFolderId(options.path);
 
-        // biome-ignore lint/suspicious/noExplicitAny: selection
-        let selected: any;
-
+      if (uuids.length > 0) {
         if (options.data) {
-          selected = dbFiles.selectAll();
+          files = await db
+            .selectFrom("files")
+            .selectAll()
+            .where("parent_folder", "is", uuids)
+            .execute();
         } else {
-          selected = dbFiles.select([
-            "name",
-            "uuid",
-            "workspace_uuid",
-            "parent_folder",
-          ]);
+          files = (
+            await db
+              .selectFrom("files")
+              .select(["name", "uuid", "workspace_uuid", "parent_folder"])
+              .where("parent_folder", "is", uuids)
+              .execute()
+          ).map((f) => {
+            return {
+              data: null,
+              uuid: f.uuid,
+              name: f.name,
+              parent_folder: f.parent_folder,
+              workspace_uuid: f.workspace_uuid,
+            };
+          });
         }
+      }
 
-        const folderId = await this.getFolderId(
-          options.path === undefined ? null : options.path
-        );
+      if (options.data) {
+        const currentFile = await db
+          .selectFrom("files")
+          .selectAll()
+          .where("parent_folder", "is", current)
+          .executeTakeFirst();
 
-        if (!options.recursive) {
-          selected = selected.where("parent_folder", "is", folderId);
-        }
-
-        const rows = await selected.execute();
-
-        files.push(...(rows as FilesTable[]));
+        if (currentFile !== undefined) files.push(currentFile);
       } else {
-        const folders: FoldersTable[] = await this.getFolders(options);
+        const currentFile = await db
+          .selectFrom("files")
+          .select(["name", "uuid", "workspace_uuid", "parent_folder"])
+          .where("parent_folder", "is", current)
+          .executeTakeFirst();
 
-        if (folders.length === 0) return files;
-
-        const dbFiles = db.selectFrom("files");
-
-        // biome-ignore lint/suspicious/noExplicitAny: selection
-        let selected: any;
-
-        if (options.data) {
-          selected = dbFiles.selectAll();
-        } else {
-          selected = dbFiles.select([
-            "name",
-            "uuid",
-            "workspace_uuid",
-            "parent_folder",
-          ]);
-        }
-
-        const rows = await selected
-          .where(
-            "parent_folder",
-            "in",
-            folders.map((f) => f.uuid)
-          )
-          .execute();
-
-        files.push(...rows);
+        if (currentFile !== undefined)
+          files.push({
+            data: null,
+            uuid: currentFile.uuid,
+            name: currentFile.name,
+            parent_folder: currentFile.parent_folder,
+            workspace_uuid: currentFile.workspace_uuid,
+          });
       }
 
       return files;
@@ -172,8 +166,6 @@ export default function getDirectoryOperations(
       options: DirectoryGetOptions
     ): Promise<FoldersTable[]> {
       options.recursive ??= true;
-
-      console.log(options);
 
       async function getFolderById(
         uuid: Nullable<string>
@@ -208,24 +200,7 @@ export default function getDirectoryOperations(
 
       const folderId = await this.getFolderId(options.path);
 
-      console.log({ folderId, options });
-
-      // if (options.path !== undefined && folderId === null) {
-      //   return [];
-      // }
-
       const folders: FoldersTable[] = [];
-
-      // Optionally include the root folder itself if it exists
-      // if (options.path !== undefined && folderId !== null) {
-      //   const rootFolder = await getFolderById(folderId);
-
-      //   console.log(rootFolder);
-
-      //   if (rootFolder) {
-      //     folders.push(rootFolder);
-      //   }
-      // }
 
       folders.push(...(await get(folderId)));
 
