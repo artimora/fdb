@@ -15,6 +15,9 @@
   },
   "scripts": {
     "build": "bunup  --exports",
-    "dev": "bunup --exports --watch"
+    "build:dev": "bunup --exports --watch",
+    "dev:api": "bun run --bun --watch src/apps/api-testing/src/index.ts",
+    "dev:testing": "bun run --bun --watch src/apps/testing/src/index.ts",
+    "dev:drive": "bun run --bun --watch src/apps/drive/src/main.tsx"
   }
 }
