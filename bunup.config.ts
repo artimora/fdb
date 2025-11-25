@@ -26,16 +26,4 @@ export default defineWorkspace([
 			plugins: [copy(["../../../README.md", "../../../LICENSE"]).to("../")],
 		},
 	},
-	{
-		name: "testing",
-		root: "src/apps/testing",
-	},
-	{
-		name: "api-testing",
-		root: "src/apps/api-testing",
-	},
-	{
-		name: "drive",
-		root: "src/apps/drive",
-	},
 ]);
