@@ -173,6 +173,8 @@ export default function getDirectoryOperations(
     ): Promise<FoldersTable[]> {
       options.recursive ??= true;
 
+      console.log(options);
+
       // Helper to get a folder by its uuid
       async function getFolderById(
         uuid: Nullable<string>
@@ -218,6 +220,9 @@ export default function getDirectoryOperations(
       // Optionally include the root folder itself if it exists
       if (options.path !== undefined && folderId !== null) {
         const rootFolder = await getFolderById(folderId);
+
+        console.log(rootFolder);
+
         if (rootFolder) {
           folders.push(rootFolder);
         }

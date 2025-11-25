@@ -1,104 +1,108 @@
-import { cleanPath, type FileMoveOptions, FileNotFoundError } from "@artimora/fdb";
+import {
+  cleanPath,
+  type FileMoveOptions,
+  FileNotFoundError,
+} from "@artimora/fdb";
 import { createRoute, getFDB } from "../../main";
 import type { APIRoute } from "../../types";
 
 export default createRoute(
-	async (c) => {
-		const fdb = getFDB(c);
+  async (c) => {
+    const fdb = getFDB(c);
 
-		const originalPath = cleanPath(c.req.query("originalPath")!);
-		const newPath = cleanPath(c.req.query("newPath")!);
-		const overwrite = c.req.query("overwrite");
-		const createDirectories = c.req.query("createDirectories");
+    const originalPath = cleanPath(c.req.query("originalPath")!);
+    const newPath = cleanPath(c.req.query("newPath")!);
+    const overwrite = c.req.query("overwrite");
+    const createDirectories = c.req.query("createDirectories");
 
-		const options: FileMoveOptions = {
-			originalPath,
-			newPath,
-			overwrite: JSON.parse(overwrite ?? "true"),
-			createDirectories: JSON.parse(createDirectories ?? "true"),
-		};
+    const options: FileMoveOptions = {
+      originalPath,
+      newPath,
+      overwrite: JSON.parse(overwrite ?? "true"),
+      createDirectories: JSON.parse(createDirectories ?? "true"),
+    };
 
-		try {
-			await fdb.file.copy(options);
-			return c.json(true);
-		} catch (error) {
-			if (error instanceof FileNotFoundError) {
-				c.status(400);
-				return c.json({ message: error.message });
-			}
-		}
+    try {
+      await fdb.file.copy(options);
+      return c.json(true);
+    } catch (error) {
+      if (error instanceof FileNotFoundError) {
+        c.status(400);
+        return c.json({ message: error.message });
+      }
+    }
 
-		c.status(400);
-		return c.json({ message: "generic" });
-	},
-	{
-		summary: "Copy File",
-		tags: ["File"],
+    c.status(400);
+    return c.json({ message: "generic" });
+  },
+  {
+    summary: "Copy File",
+    tags: ["File"],
 
-		parameters: [
-			{
-				name: "originalPath",
-				in: "query",
-				description: "Target path to copy from",
-				required: true,
-				schema: {
-					type: "string",
-				},
-			},
-			{
-				name: "newPath",
-				in: "query",
-				description: "Target path to copy to",
-				required: true,
-				schema: {
-					type: "string",
-				},
-			},
-			{
-				name: "overwrite",
-				in: "query",
-				description: "Whether to overwrite the file if it already exists",
-				required: false,
-				schema: {
-					type: "boolean",
-					default: true,
-				},
-			},
-			{
-				name: "createDirectories",
-				in: "query",
-				description: "Whether to create directories if they don't exist",
-				required: false,
-				schema: {
-					type: "boolean",
-					default: true,
-				},
-			},
-		],
-		responses: {
-			200: {
-				description: "File was successfully copied",
-				content: {
-					"application/json": {
-						schema: {
-							type: "boolean",
-						},
-					},
-				},
-			},
-			400: {
-				description: "File could not be copied",
-				content: {
-					"application/json": {
-						schema: {
-							type: "object",
-							properties: {
-								message: { type: "string" },
-							},
-						},
-					},
-				},
-			},
-		},
-	},
+    parameters: [
+      {
+        name: "originalPath",
+        in: "query",
+        description: "Target path to copy from",
+        required: true,
+        schema: {
+          type: "string",
+        },
+      },
+      {
+        name: "newPath",
+        in: "query",
+        description: "Target path to copy to",
+        required: true,
+        schema: {
+          type: "string",
+        },
+      },
+      {
+        name: "overwrite",
+        in: "query",
+        description: "Whether to overwrite the file if it already exists",
+        required: false,
+        schema: {
+          type: "boolean",
+          default: true,
+        },
+      },
+      {
+        name: "createDirectories",
+        in: "query",
+        description: "Whether to create directories if they don't exist",
+        required: false,
+        schema: {
+          type: "boolean",
+          default: true,
+        },
+      },
+    ],
+    responses: {
+      200: {
+        description: "File was successfully copied",
+        content: {
+          "application/json": {
+            schema: {
+              type: "boolean",
+            },
+          },
+        },
+      },
+      400: {
+        description: "File could not be copied",
+        content: {
+          "application/json": {
+            schema: {
+              type: "object",
+              properties: {
+                message: { type: "string" },
+              },
+            },
+          },
+        },
+      },
+    },
+  }
 ) satisfies APIRoute as APIRoute;
