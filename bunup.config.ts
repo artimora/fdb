@@ -34,4 +34,8 @@ export default defineWorkspace([
 		name: "api-testing",
 		root: "src/apps/api-testing",
 	},
+	{
+		name: "drive",
+		root: "src/apps/drive",
+	},
 ]);
