@@ -6,10 +6,11 @@ export default createRoute(
   async (c) => {
     const fdb = getFDB(c);
 
-    const path = cleanPath(c.req.query("path")!);
+    const path = cleanPath(c.req.query("path"));
 
     try {
       const text = await fdb.file.readAllText(path);
+      c.header("Content-Type", "text/plain");
       return c.text(text);
     } catch (error) {
       if (error instanceof FileNotFoundError) {

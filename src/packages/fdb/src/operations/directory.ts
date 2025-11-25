@@ -175,7 +175,6 @@ export default function getDirectoryOperations(
 
       console.log(options);
 
-      // Helper to get a folder by its uuid
       async function getFolderById(
         uuid: Nullable<string>
       ): Promise<FoldersTable | null> {
@@ -207,26 +206,26 @@ export default function getDirectoryOperations(
         return folders;
       }
 
-      const folderId = await this.getFolderId(
-        options.path === undefined ? null : options.path
-      );
+      const folderId = await this.getFolderId(options.path);
 
-      //   if (options.path !== undefined && folderId === null) {
-      //     return [];
-      //   }
+      console.log({ folderId, options });
+
+      // if (options.path !== undefined && folderId === null) {
+      //   return [];
+      // }
 
       const folders: FoldersTable[] = [];
 
       // Optionally include the root folder itself if it exists
-      if (options.path !== undefined && folderId !== null) {
-        const rootFolder = await getFolderById(folderId);
+      // if (options.path !== undefined && folderId !== null) {
+      //   const rootFolder = await getFolderById(folderId);
 
-        console.log(rootFolder);
+      //   console.log(rootFolder);
 
-        if (rootFolder) {
-          folders.push(rootFolder);
-        }
-      }
+      //   if (rootFolder) {
+      //     folders.push(rootFolder);
+      //   }
+      // }
 
       folders.push(...(await get(folderId)));
 
