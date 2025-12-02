@@ -4,13 +4,11 @@ import { Kysely, Migrator } from "kysely";
 import { BunSqliteDialect } from "kysely-bun-sqlite";
 
 // biome-ignore lint/suspicious/noExplicitAny: we dont need anything but the local
-export async function getDb(name: string): Promise<Kysely<any>> {
-	const dbName: string = `${name}.testing.db.sqlite`;
-
+export async function getDb(): Promise<Kysely<any>> {
 	// biome-ignore lint/suspicious/noExplicitAny: we dont need anything but the local
 	const db = new Kysely<any>({
 		dialect: new BunSqliteDialect({
-			database: new Database(dbName),
+			database: new Database(":memory:"),
 		}),
 	});
 
@@ -30,7 +28,9 @@ export async function migrateToLatest(db: Kysely<any>): Promise<void> {
 
 	results?.forEach((it) => {
 		if (it.status === "Success") {
-			console.log(`migration "${it.migrationName}" was executed successfully`);
+			console.log(
+				`migration "${it.migrationName}" was executed successfully`
+			);
 		} else if (it.status === "Error") {
 			console.error(`failed to execute migration "${it.migrationName}"`);
 		}

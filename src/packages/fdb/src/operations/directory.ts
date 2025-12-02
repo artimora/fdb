@@ -1,235 +1,256 @@
 import { randomUUID } from "node:crypto";
 import path from "node:path";
 import type { Kysely } from "kysely";
-import { DirectoryNotFoundError } from "../errors";
+import { DirectoryError, DirectoryNotFoundError } from "../errors";
 import type {
-  DirectoryDeleteOptions,
-  DirectoryGetOptions,
-  DirectoryOperations,
-  FDB,
-  FileGetOptions,
-  FilesTable,
-  FoldersTable,
-  Maybe,
-  Nullable,
-  Potential,
+	DirectoryDeleteOptions,
+	DirectoryGetOptions,
+	DirectoryOperations,
+	FDB,
+	FileGetOptions,
+	FilesTable,
+	FoldersTable,
+	Maybe,
+	Nullable,
+	Potential
 } from "../types";
 import { splitPath } from "../util";
 
 export default function getDirectoryOperations(
-  db: Kysely<FDB>
+	db: Kysely<FDB>
 ): DirectoryOperations {
-  return {
-    create: async function (path: Potential<string>): Promise<void> {
-      if (path === undefined)
-        throw new DirectoryNotFoundError("Path is undefined");
-      if (await this.exists(path)) return; // direct checking if it already exists
+	return {
+		create: async function (path: Potential<string>): Promise<void> {
+			if (path === undefined)
+				throw new DirectoryNotFoundError("Path is undefined");
+			if (await this.exists(path)) return; // direct checking if it already exists
 
-      const parts = splitPath(path);
+			const parts = splitPath(path);
 
-      let previous: Nullable<string> = null;
-      let built: string = "";
+			let previous: Nullable<string> = null;
+			let built: string = "";
 
-      for (const v of parts) {
-        built = `${built}/${v}`;
+			for (const v of parts) {
+				built = `${built}/${v}`;
 
-        const previousPart = await db
-          .selectFrom("folders")
-          .select(["uuid"])
-          .where("name", "=", v)
-          .where("workspace_uuid", "=", "default")
-          .where("parent_folder", "is", previous)
-          .executeTakeFirst();
+				const previousPart = await db
+					.selectFrom("folders")
+					.select(["uuid"])
+					.where("name", "=", v)
+					.where("workspace_uuid", "=", "default")
+					.where("parent_folder", "is", previous)
+					.executeTakeFirst();
 
-        if (previousPart === undefined) {
-          const id = randomUUID() as string;
+				if (previousPart === undefined) {
+					const id = randomUUID() as string;
 
-          await db
-            .insertInto("folders")
-            .values({
-              uuid: id,
-              name: v,
-              workspace_uuid: "default",
-              parent_folder: previous,
-            })
-            .execute();
+					await db
+						.insertInto("folders")
+						.values({
+							uuid: id,
+							name: v,
+							workspace_uuid: "default",
+							parent_folder: previous
+						})
+						.execute();
 
-          previous = id; // safe now
-        } else {
-          previous = previousPart.uuid;
-        }
-      }
-    },
-    delete: async function (options: DirectoryDeleteOptions): Promise<void> {
-      if (options.path === undefined)
-        throw new DirectoryNotFoundError("Path is undefined");
+					previous = id; // safe now
+				} else {
+					previous = previousPart.uuid;
+				}
+			}
+		},
+		delete: async function (
+			options: DirectoryDeleteOptions
+		): Promise<void> {
+			if (options.path === undefined)
+				throw new DirectoryNotFoundError("Path is undefined");
 
-      if (!(await this.exists(options.path)))
-        throw new DirectoryNotFoundError("Directory doesn't exist");
+			if (!(await this.exists(options.path)))
+				throw new DirectoryNotFoundError("Directory doesn't exist");
 
-      const id = await this.getFolderId(options.path);
+			const id = await this.getFolderId(options.path);
 
-      await db.deleteFrom("folders").where("uuid", "=", id).execute();
-    },
-    exists: async (path: Maybe<string>): Promise<boolean> => {
-      if (path === null) return false;
-      if (path === undefined) return false;
+			if (
+				(await this.getFiles({ path: options.path, data: false }))
+					.length > 0 &&
+				options.onlyOnEmpty
+			) {
+				throw new DirectoryError(
+					"Directry attempting to delete isn't empty."
+				);
+			}
 
-      const parts = splitPath(path);
+			await db.deleteFrom("folders").where("uuid", "=", id).execute();
+		},
+		exists: async (path: Maybe<string>): Promise<boolean> => {
+			if (path === null) return false;
+			if (path === undefined) return false;
 
-      if (parts.length <= 0) return false;
+			const parts = splitPath(path);
 
-      let previous: Nullable<string> = null;
+			if (parts.length <= 0) return false;
 
-      for (const v of parts) {
-        // Try to find the folder at this level
-        const row = await db
-          .selectFrom("folders")
-          .select(["uuid"])
-          .where("name", "=", v)
-          .where("workspace_uuid", "=", "default")
-          .where("parent_folder", "is", previous)
-          .executeTakeFirst();
+			let previous: Nullable<string> = null;
 
-        if (!row) return false;
+			for (const v of parts) {
+				// Try to find the folder at this level
+				const row = await db
+					.selectFrom("folders")
+					.select(["uuid"])
+					.where("name", "=", v)
+					.where("workspace_uuid", "=", "default")
+					.where("parent_folder", "is", previous)
+					.executeTakeFirst();
 
-        previous = row.uuid;
-      }
+				if (!row) return false;
 
-      return true;
-    },
-    getFiles: async function (options: FileGetOptions): Promise<FilesTable[]> {
-      options.recursive ??= true;
-      options.data ??= false;
+				previous = row.uuid;
+			}
 
-      let files: FilesTable[] = [];
+			return true;
+		},
+		getFiles: async function (
+			options: FileGetOptions
+		): Promise<FilesTable[]> {
+			options.recursive ??= true;
+			options.data ??= false;
 
-      const rawFolders = await this.getFolders(options);
-      const uuids: (string | null)[] = rawFolders.map((f) => f.uuid);
+			let files: FilesTable[] = [];
 
-      const current = await this.getFolderId(options.path);
+			const rawFolders = await this.getFolders(options);
+			const uuids: (string | null)[] = rawFolders.map((f) => f.uuid);
 
-      if (uuids.length > 0) {
-        if (options.data) {
-          files = await db
-            .selectFrom("files")
-            .selectAll()
-            .where("parent_folder", "is", uuids)
-            .execute();
-        } else {
-          files = (
-            await db
-              .selectFrom("files")
-              .select(["name", "uuid", "workspace_uuid", "parent_folder"])
-              .where("parent_folder", "is", uuids)
-              .execute()
-          ).map((f) => {
-            return {
-              data: null,
-              uuid: f.uuid,
-              name: f.name,
-              parent_folder: f.parent_folder,
-              workspace_uuid: f.workspace_uuid,
-            };
-          });
-        }
-      }
+			const current = await this.getFolderId(options.path);
 
-      if (options.data) {
-        const currentFile = await db
-          .selectFrom("files")
-          .selectAll()
-          .where("parent_folder", "is", current)
-          .executeTakeFirst();
+			if (uuids.length > 0) {
+				if (options.data) {
+					files = await db
+						.selectFrom("files")
+						.selectAll()
+						.where("parent_folder", "is", uuids)
+						.execute();
+				} else {
+					files = (
+						await db
+							.selectFrom("files")
+							.select([
+								"name",
+								"uuid",
+								"workspace_uuid",
+								"parent_folder"
+							])
+							.where("parent_folder", "is", uuids)
+							.execute()
+					).map((f) => {
+						return {
+							data: null,
+							uuid: f.uuid,
+							name: f.name,
+							parent_folder: f.parent_folder,
+							workspace_uuid: f.workspace_uuid
+						};
+					});
+				}
+			}
 
-        if (currentFile !== undefined) files.push(currentFile);
-      } else {
-        const currentFile = await db
-          .selectFrom("files")
-          .select(["name", "uuid", "workspace_uuid", "parent_folder"])
-          .where("parent_folder", "is", current)
-          .executeTakeFirst();
+			if (options.data) {
+				const currentFile = await db
+					.selectFrom("files")
+					.selectAll()
+					.where("parent_folder", "is", current)
+					.executeTakeFirst();
 
-        if (currentFile !== undefined)
-          files.push({
-            data: null,
-            uuid: currentFile.uuid,
-            name: currentFile.name,
-            parent_folder: currentFile.parent_folder,
-            workspace_uuid: currentFile.workspace_uuid,
-          });
-      }
+				if (currentFile !== undefined) files.push(currentFile);
+			} else {
+				const currentFile = await db
+					.selectFrom("files")
+					.select(["name", "uuid", "workspace_uuid", "parent_folder"])
+					.where("parent_folder", "is", current)
+					.executeTakeFirst();
 
-      return files;
-    },
-    getFolders: async function (
-      options: DirectoryGetOptions
-    ): Promise<FoldersTable[]> {
-      options.recursive ??= true;
+				if (currentFile !== undefined)
+					files.push({
+						data: null,
+						uuid: currentFile.uuid,
+						name: currentFile.name,
+						parent_folder: currentFile.parent_folder,
+						workspace_uuid: currentFile.workspace_uuid
+					});
+			}
 
-      async function getFolderById(
-        uuid: Nullable<string>
-      ): Promise<FoldersTable | null> {
-        if (uuid == null) return null;
-        const folder = await db
-          .selectFrom("folders")
-          .selectAll()
-          .where("uuid", "=", uuid)
-          .executeTakeFirst();
-        return folder ?? null;
-      }
+			return files;
+		},
+		getFolders: async function (
+			options: DirectoryGetOptions
+		): Promise<FoldersTable[]> {
+			options.recursive ??= true;
 
-      async function get(parent: Nullable<string>): Promise<FoldersTable[]> {
-        const rawFolders = await db
-          .selectFrom("folders")
-          .selectAll()
-          .where("parent_folder", "is", parent)
-          .execute();
+			async function getFolderById(
+				uuid: Nullable<string>
+			): Promise<FoldersTable | null> {
+				if (uuid == null) return null;
+				const folder = await db
+					.selectFrom("folders")
+					.selectAll()
+					.where("uuid", "=", uuid)
+					.executeTakeFirst();
+				return folder ?? null;
+			}
 
-        const folders: FoldersTable[] = [];
+			async function get(
+				parent: Nullable<string>
+			): Promise<FoldersTable[]> {
+				const rawFolders = await db
+					.selectFrom("folders")
+					.selectAll()
+					.where("parent_folder", "is", parent)
+					.execute();
 
-        for (const folder of rawFolders) {
-          folders.push(folder);
-          if (options.recursive) {
-            folders.push(...(await get(folder.uuid)));
-          }
-        }
+				const folders: FoldersTable[] = [];
 
-        return folders;
-      }
+				for (const folder of rawFolders) {
+					folders.push(folder);
+					if (options.recursive) {
+						folders.push(...(await get(folder.uuid)));
+					}
+				}
 
-      const folderId = await this.getFolderId(options.path);
+				return folders;
+			}
 
-      const folders: FoldersTable[] = [];
+			const folderId = await this.getFolderId(options.path);
 
-      folders.push(...(await get(folderId)));
+			const folders: FoldersTable[] = [];
 
-      return folders;
-    },
-    getFolderId: async (path: Maybe<string>): Promise<Nullable<string>> => {
-      if (path === null) return null;
-      if (path === undefined)
-        throw new DirectoryNotFoundError("Path is undefined");
+			folders.push(...(await get(folderId)));
 
-      const parts = splitPath(path);
-      let previous: Nullable<string> = null;
+			return folders;
+		},
+		getFolderId: async (path: Maybe<string>): Promise<Nullable<string>> => {
+			if (path === null) return null;
+			if (path === undefined)
+				throw new DirectoryNotFoundError("Path is undefined");
 
-      for (const v of parts) {
-        // Try to find the folder at this level
-        const row = await db
-          .selectFrom("folders")
-          .select(["uuid"])
-          .where("name", "=", v)
-          .where("workspace_uuid", "=", "default")
-          .where("parent_folder", "is", previous)
-          .executeTakeFirst();
+			const parts = splitPath(path);
+			let previous: Nullable<string> = null;
 
-        if (!row) return null;
+			for (const v of parts) {
+				// Try to find the folder at this level
+				const row = await db
+					.selectFrom("folders")
+					.select(["uuid"])
+					.where("name", "=", v)
+					.where("workspace_uuid", "=", "default")
+					.where("parent_folder", "is", previous)
+					.executeTakeFirst();
 
-        previous = row.uuid;
-      }
+				if (!row) return null;
 
-      return previous;
-    },
-  };
+				previous = row.uuid;
+			}
+
+			return previous;
+		}
+	};
 }

@@ -21,5 +21,13 @@
     "dev:api": "bun --bun run --watch src/apps/api-testing/src/index.ts",
     "dev:testing": "bun--bun run --watch src/apps/testing/src/index.ts",
     "dev:drive": "cd src/apps/drive && bun --bun run vite"
+  },
+  "prettier": {
+    "singleQuote": false,
+    "tabWidth": 4,
+    "useTabs": true,
+    "trailingComma": "none",
+    "semi": true,
+    "jsxSingleQuote": false
   }
 }
