@@ -4,7 +4,8 @@
   "private": false,
   "workspaces": [
     "src/packages/**",
-    "src/apps/**"
+    "src/apps/**",
+    "src/tests/**"
   ],
   "dependencies": {
     "typescript": "^5.9.3"
