@@ -65,10 +65,9 @@ describe("directories > root", () => {
 		]);
 	});
 
-	test.todo("getFiles > empty", async () => {
+	test("getFiles > empty", async () => {
 		const { db, fdb } = await get();
 
-		await fdb.directory.delete({ path: "root", onlyOnEmpty: false }); // this test relies on delete, which may be buggy?
 		await fdb.directory.create("root"); // this test relies on create, which may be buggy?
 
 		const files = await fdb.directory.getFiles({ path: "root" });
@@ -81,17 +80,47 @@ describe("directories > root", () => {
 		expect(filesNames).toEqual([]);
 	});
 
-	test.todo("getFolderId", () => {
-		// unsure how to test for this? besides if it fails *almost everything* internally would fail regardless
+	test("getFolders > folders", async () => {
+		const { db, fdb } = await get();
+
+		await fdb.directory.create("root");
+
+		await fdb.directory.create("root/sub-1");
+		await fdb.directory.create("root/sub-2");
+		await fdb.directory.create("root/sub-3");
+
+		const folders = await fdb.directory.getFolders({ path: "root" });
+
+		const foldersParents = folders.map((t) => t.parent_folder);
+		const foldersNames = folders.map((t) => t.name);
+
+		const parent = (await fdb.directory.getFolderId("root"))!;
+
+		expect(folders).toHaveLength(3);
+		expect(foldersParents).toEqual([parent, parent, parent]);
+		expect(foldersNames).toEqual(["sub-1", "sub-2", "sub-3"]);
 	});
 
-	test.todo("getFolders", () => {});
+	test("getFolders > empty", async () => {
+		const { db, fdb } = await get();
+
+		await fdb.directory.create("root");
+
+		const folders = await fdb.directory.getFolders({ path: "root" });
+
+		const foldersParents = folders.map((t) => t.parent_folder);
+		const foldersNames = folders.map((t) => t.name);
+
+		expect(folders).toHaveLength(0);
+		expect(foldersParents).toEqual([]);
+		expect(foldersNames).toEqual([]);
+	});
 });
 
 describe("directories > sub", () => {});
 
 describe("directories > undefined", () => {
-	test.todo("create", async () => {
+	test("create", async () => {
 		const { db, fdb } = await get();
 
 		// there has got to be a better way to do this
