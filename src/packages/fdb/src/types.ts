@@ -83,3 +83,11 @@ export interface FDB {
 	folders: FoldersTable;
 	files: FilesTable;
 }
+
+type Event = () => void;
+type Action<T> = (arg: T) => void;
+type Func<T> = () => T;
+
+type PromiseEvent = () => Promise<void>;
+type PromiseAction<T> = (arg: T) => Promise<void>;
+type PromiseFunc<T> = () => Promise<T>;
