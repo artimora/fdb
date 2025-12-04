@@ -48,3 +48,36 @@ export async function migrateToLatest(db: Kysely<any>): Promise<void> {
 		process.exit(1);
 	}
 }
+
+export function charset(length: number, charset: string): string {
+	let result = "";
+	for (let i = 0; i < length; i++) {
+		result += charset.charAt(Math.floor(Math.random() * charset.length));
+	}
+	return result;
+}
+
+export function charsetPath(
+	maxElements: number = 5,
+	length: number = 12
+): string {
+	const alphanumericCharset =
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+	const elements: string[] = [];
+	const count = clamp(
+		Math.floor(Math.random() * maxElements),
+		1,
+		maxElements
+	);
+
+	for (let index = 0; index < count; index++) {
+		elements.push(charset(length, alphanumericCharset));
+	}
+
+	return elements.join("/");
+}
+
+export function clamp(value: number, min: number, max: number): number {
+	return Math.min(Math.max(value, min), max);
+}
