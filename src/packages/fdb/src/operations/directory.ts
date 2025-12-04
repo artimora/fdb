@@ -64,8 +64,11 @@ export default function getDirectoryOperations(
 			}
 		},
 		delete: async function (
-			options: DirectoryDeleteOptions
+			options: Maybe<DirectoryDeleteOptions>
 		): Promise<void> {
+			if (options === null || options === undefined)
+				throw new DirectoryError("options is null");
+
 			if (options.path === undefined)
 				throw new DirectoryNotFoundError("Path is undefined");
 
@@ -116,8 +119,11 @@ export default function getDirectoryOperations(
 			return true;
 		},
 		getFiles: async function (
-			options: FileGetOptions
+			options: Maybe<FileGetOptions>
 		): Promise<FilesTable[]> {
+			if (options === null || options === undefined)
+				throw new DirectoryError("options is null");
+
 			options.recursive ??= true;
 			options.data ??= false;
 
@@ -191,8 +197,11 @@ export default function getDirectoryOperations(
 			return files;
 		},
 		getFolders: async function (
-			options: DirectoryGetOptions
+			options: Maybe<DirectoryGetOptions>
 		): Promise<FoldersTable[]> {
+			if (options === null || options === undefined)
+				throw new DirectoryError("options is null");
+
 			options.recursive ??= true;
 
 			async function get(
@@ -208,7 +217,7 @@ export default function getDirectoryOperations(
 
 				for (const folder of rawFolders) {
 					folders.push(folder);
-					if (options.recursive) {
+					if (options!.recursive) {
 						folders.push(...(await get(folder.uuid)));
 					}
 				}

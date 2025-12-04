@@ -249,4 +249,52 @@ describe("directories > undefined", () => {
 			expect(error.name).toEqual("DirectoryNotFoundError");
 		}
 	});
+
+	test("delete", async () => {
+		const { fdb } = await get();
+
+		// there has got to be a better way to do this
+		try {
+			await fdb.directory.delete(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("DirectoryError");
+		}
+	});
+
+	test("exists", async () => {
+		const { fdb } = await get();
+
+		// there has got to be a better way to do this
+		try {
+			await fdb.directory.exists(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("DirectoryNotFoundError");
+		}
+	});
+
+	test("getFiles", async () => {
+		const { fdb } = await get();
+
+		// there has got to be a better way to do this
+		try {
+			await fdb.directory.getFiles(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("DirectoryError");
+		}
+	});
+
+	test("getFolders", async () => {
+		const { fdb } = await get();
+
+		// there has got to be a better way to do this
+		try {
+			await fdb.directory.getFolders(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("DirectoryError");
+		}
+	});
 });

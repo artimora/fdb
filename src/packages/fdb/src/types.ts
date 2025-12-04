@@ -49,19 +49,21 @@ export type DirectoryOperations = {
 	create: (path: Potential<string>) => MaybePromise<void>;
 
 	// TODO: give option to pass purey string path
-	delete: (options: DirectoryDeleteOptions) => MaybePromise<void>;
+	delete: (options: Maybe<DirectoryDeleteOptions>) => MaybePromise<void>;
 	exists: (path: Maybe<string>) => MaybePromise<boolean>;
 
 	// TODO: give option to pass purey string path
 	// TODO: add filter option and subdirectories option
-	getFiles: (options: FileGetOptions) => MaybePromise<FilesTable[]>;
+	getFiles: (options: Maybe<FileGetOptions>) => MaybePromise<FilesTable[]>;
 	getFolderId: (path: Maybe<string>) => MaybePromise<Nullable<string>>;
 	getFolderById: (
 		path: Maybe<string>
 	) => MaybePromise<Nullable<FoldersTable>>;
 
 	// TODO: give option to pass purey string path
-	getFolders: (options: DirectoryGetOptions) => MaybePromise<FoldersTable[]>;
+	getFolders: (
+		options: Maybe<DirectoryGetOptions>
+	) => MaybePromise<FoldersTable[]>;
 };
 
 export interface FoldersTable {
