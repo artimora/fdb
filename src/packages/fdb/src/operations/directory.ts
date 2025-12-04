@@ -27,6 +27,9 @@ export default function getDirectoryOperations(
 
 			const parts = splitPath(path);
 
+			if (parts === undefined)
+				throw new DirectoryError("Path is undefined");
+
 			let previous: Nullable<string> = null;
 			let built: string = "";
 
@@ -88,6 +91,8 @@ export default function getDirectoryOperations(
 			if (path === undefined) return false;
 
 			const parts = splitPath(path);
+
+			if (parts === undefined) return false;
 
 			if (parts.length <= 0) return false;
 
@@ -159,24 +164,28 @@ export default function getDirectoryOperations(
 					.selectFrom("files")
 					.selectAll()
 					.where("parent_folder", "is", current)
-					.executeTakeFirst();
+					.execute();
 
-				if (currentFile !== undefined) files.push(currentFile);
+				if (currentFile !== undefined) files.push(...currentFile);
 			} else {
 				const currentFile = await db
 					.selectFrom("files")
 					.select(["name", "uuid", "workspace_uuid", "parent_folder"])
 					.where("parent_folder", "is", current)
-					.executeTakeFirst();
+					.execute();
 
 				if (currentFile !== undefined)
-					files.push({
-						data: null,
-						uuid: currentFile.uuid,
-						name: currentFile.name,
-						parent_folder: currentFile.parent_folder,
-						workspace_uuid: currentFile.workspace_uuid
-					});
+					files.push(
+						...currentFile.map((f) => {
+							return {
+								data: null,
+								uuid: f.uuid,
+								name: f.name,
+								parent_folder: f.parent_folder,
+								workspace_uuid: f.workspace_uuid
+							};
+						})
+					);
 			}
 
 			return files;
@@ -185,18 +194,6 @@ export default function getDirectoryOperations(
 			options: DirectoryGetOptions
 		): Promise<FoldersTable[]> {
 			options.recursive ??= true;
-
-			async function getFolderById(
-				uuid: Nullable<string>
-			): Promise<FoldersTable | null> {
-				if (uuid == null) return null;
-				const folder = await db
-					.selectFrom("folders")
-					.selectAll()
-					.where("uuid", "=", uuid)
-					.executeTakeFirst();
-				return folder ?? null;
-			}
 
 			async function get(
 				parent: Nullable<string>
@@ -233,6 +230,10 @@ export default function getDirectoryOperations(
 				throw new DirectoryNotFoundError("Path is undefined");
 
 			const parts = splitPath(path);
+
+			if (parts === undefined)
+				throw new DirectoryError("Path is undefined");
+
 			let previous: Nullable<string> = null;
 
 			for (const v of parts) {
@@ -251,6 +252,17 @@ export default function getDirectoryOperations(
 			}
 
 			return previous;
+		},
+		getFolderById: async (
+			uuid: Maybe<string>
+		): Promise<Nullable<FoldersTable>> => {
+			if (uuid == null) return null;
+			const folder = await db
+				.selectFrom("folders")
+				.selectAll()
+				.where("uuid", "=", uuid)
+				.executeTakeFirst();
+			return folder ?? null;
 		}
 	};
 }

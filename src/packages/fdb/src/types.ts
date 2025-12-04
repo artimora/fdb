@@ -56,6 +56,9 @@ export type DirectoryOperations = {
 	// TODO: add filter option and subdirectories option
 	getFiles: (options: FileGetOptions) => MaybePromise<FilesTable[]>;
 	getFolderId: (path: Maybe<string>) => MaybePromise<Nullable<string>>;
+	getFolderById: (
+		path: Maybe<string>
+	) => MaybePromise<Nullable<FoldersTable>>;
 
 	// TODO: give option to pass purey string path
 	getFolders: (options: DirectoryGetOptions) => MaybePromise<FoldersTable[]>;

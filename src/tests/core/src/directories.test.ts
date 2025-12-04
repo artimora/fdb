@@ -1,16 +1,17 @@
 import { describe, expect, test } from "bun:test";
-import { createFDB, DirectoryNotFoundError } from "@artimora/fdb";
-import { getDb } from "./util";
-
-const fdb = createFDB(await getDb());
+import { get } from "./util";
 
 describe("directories > root", () => {
 	test("create", async () => {
+		const { db, fdb } = await get();
+
 		await fdb.directory.create("root");
 		expect(await fdb.directory.exists("root")).toBeTrue(); // this test relies on exists, which may be buggy?
 	});
 
 	test("delete", async () => {
+		const { db, fdb } = await get();
+
 		await fdb.directory.create("root"); // this test relies on create, which may be buggy?
 
 		await fdb.directory.delete({ path: "root", onlyOnEmpty: false });
@@ -18,6 +19,8 @@ describe("directories > root", () => {
 	});
 
 	test("delete > onlyOnEmpty w/ files", async () => {
+		const { db, fdb } = await get();
+
 		await fdb.directory.create("root"); // this test relies on create, which may be buggy?
 
 		await fdb.file.create("root/file.test");
@@ -31,12 +34,15 @@ describe("directories > root", () => {
 	});
 
 	test("exists", async () => {
+		const { db, fdb } = await get();
+
 		await fdb.directory.create("root"); // this test relies on create, which may be buggy?
 		expect(await fdb.directory.exists("root")).toBeTrue();
 	});
 
 	test("getFiles > files", async () => {
-		await fdb.directory.delete({ path: "root", onlyOnEmpty: false }); // this test relies on delete, which may be buggy?
+		const { db, fdb } = await get();
+
 		await fdb.directory.create("root"); // this test relies on create, which may be buggy?
 
 		await fdb.file.create("root/file-1.test");
@@ -48,10 +54,10 @@ describe("directories > root", () => {
 		const filesParents = files.map((t) => t.parent_folder);
 		const filesNames = files.map((t) => t.name);
 
-		console.log(files);
+		const parentId = await fdb.directory.getFolderId("root");
 
 		expect(files).toHaveLength(3);
-		expect(filesParents).toEqual(["root", "root", "root"]);
+		expect(filesParents).toEqual([parentId, parentId, parentId]);
 		expect(filesNames).toEqual([
 			"file-1.test",
 			"file-2.test",
@@ -60,6 +66,8 @@ describe("directories > root", () => {
 	});
 
 	test.todo("getFiles > empty", async () => {
+		const { db, fdb } = await get();
+
 		await fdb.directory.delete({ path: "root", onlyOnEmpty: false }); // this test relies on delete, which may be buggy?
 		await fdb.directory.create("root"); // this test relies on create, which may be buggy?
 
@@ -84,6 +92,8 @@ describe("directories > sub", () => {});
 
 describe("directories > undefined", () => {
 	test.todo("create", async () => {
+		const { db, fdb } = await get();
+
 		// there has got to be a better way to do this
 		try {
 			await fdb.directory.create(undefined);

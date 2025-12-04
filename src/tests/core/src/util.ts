@@ -1,15 +1,25 @@
 import { Database } from "bun:sqlite";
-import { getProvider } from "@artimora/fdb";
+import { createFDB, fdb, getProvider, type FDB } from "@artimora/fdb";
 import { Kysely, Migrator } from "kysely";
 import { BunSqliteDialect } from "kysely-bun-sqlite";
 
+export async function get(): Promise<{
+	db: Kysely<FDB>;
+	fdb: fdb;
+}> {
+	const db = await getDb();
+	const fdb = createFDB(db);
+
+	return { db, fdb };
+}
+
 // biome-ignore lint/suspicious/noExplicitAny: we dont need anything but the local
-export async function getDb(): Promise<Kysely<any>> {
+export async function getDb(): Promise<Kysely<FDB>> {
 	// biome-ignore lint/suspicious/noExplicitAny: we dont need anything but the local
 	const db = new Kysely<any>({
 		dialect: new BunSqliteDialect({
-			database: new Database(":memory:"),
-		}),
+			database: new Database(":memory:")
+		})
 	});
 
 	await migrateToLatest(db);
@@ -21,17 +31,13 @@ export async function getDb(): Promise<Kysely<any>> {
 export async function migrateToLatest(db: Kysely<any>): Promise<void> {
 	const migrator = new Migrator({
 		db,
-		provider: getProvider(),
+		provider: getProvider()
 	});
 
 	const { error, results } = await migrator.migrateToLatest();
 
 	results?.forEach((it) => {
-		if (it.status === "Success") {
-			console.log(
-				`migration "${it.migrationName}" was executed successfully`
-			);
-		} else if (it.status === "Error") {
+		if (it.status === "Error") {
 			console.error(`failed to execute migration "${it.migrationName}"`);
 		}
 	});
