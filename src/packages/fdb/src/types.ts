@@ -29,19 +29,22 @@ export type FileGetOptions = {
 
 // potential for input, nullable for output
 export type FileOperations = {
-	writeAllText: (path: Potential<string>, text: string) => MaybePromise<void>;
+	writeAllText: (
+		path: Potential<string>,
+		text: Maybe<string>
+	) => MaybePromise<void>;
 	readAllText: (path: Potential<string>) => MaybePromise<string>;
 
 	writeAllBytes: (
 		path: Potential<string>,
-		bytes: Uint8Array
+		bytes: Maybe<Uint8Array>
 	) => MaybePromise<void>;
 	readAllBytes: (path: Potential<string>) => MaybePromise<Uint8Array>;
 
 	create: (path: Potential<string>) => MaybePromise<void>;
 	exists: (path: Potential<string>) => MaybePromise<boolean>;
-	copy: (options: FileMoveOptions) => MaybePromise<void>;
-	move: (options: FileMoveOptions) => MaybePromise<void>;
+	copy: (options: Maybe<FileMoveOptions>) => MaybePromise<void>;
+	move: (options: Maybe<FileMoveOptions>) => MaybePromise<void>;
 	delete: (path: Potential<string>) => MaybePromise<void>;
 };
 

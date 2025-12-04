@@ -1,4 +1,12 @@
-export class FileNotFoundError extends Error {
+export class FileError extends Error {
+	constructor(message: string, options?: ErrorOptions) {
+		super(message, options);
+		Object.setPrototypeOf(this, FileError.prototype);
+		this.name = "FileError";
+	}
+}
+
+export class FileNotFoundError extends FileError {
 	constructor(message: string, options?: ErrorOptions) {
 		super(message, options);
 		Object.setPrototypeOf(this, FileNotFoundError.prototype);

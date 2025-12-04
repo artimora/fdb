@@ -1,29 +1,46 @@
-import { describe, test } from "bun:test";
-import { createFDB } from "@artimora/fdb";
-import { getDb } from "./util";
-
-const fdb = createFDB(await getDb());
+import { describe, expect, test } from "bun:test";
+import { charsetPath, get } from "./util";
 
 //#region files > root
 
 describe("files > root", () => {
-	test.todo("writeAllText", () => {});
+	const path = "root";
 
-	test.todo("readAllText", () => {});
+	test.todo("writeAllText", async () => {
+		const { fdb } = await get();
+	});
 
-	test.todo("writeAllBytes", () => {});
+	test.todo("readAllText", async () => {
+		const { fdb } = await get();
+	});
 
-	test.todo("readAllBytes", () => {});
+	test.todo("writeAllBytes", async () => {
+		const { fdb } = await get();
+	});
 
-	test.todo("create", () => {});
+	test.todo("readAllBytes", async () => {
+		const { fdb } = await get();
+	});
 
-	test.todo("exists", () => {});
+	test.todo("create", async () => {
+		const { fdb } = await get();
+	});
 
-	test.todo("copy", () => {});
+	test.todo("exists", async () => {
+		const { fdb } = await get();
+	});
 
-	test.todo("move", () => {});
+	test.todo("copy", async () => {
+		const { fdb } = await get();
+	});
 
-	test.todo("delete", () => {});
+	test.todo("move", async () => {
+		const { fdb } = await get();
+	});
+
+	test.todo("delete", async () => {
+		const { fdb } = await get();
+	});
 });
 
 //#endregion files > root
@@ -31,23 +48,7 @@ describe("files > root", () => {
 //#region files > sub
 
 describe("files > sub", () => {
-	test.todo("writeAllText", () => {});
-
-	test.todo("readAllText", () => {});
-
-	test.todo("writeAllBytes", () => {});
-
-	test.todo("readAllBytes", () => {});
-
-	test.todo("create", () => {});
-
-	test.todo("exists", () => {});
-
-	test.todo("copy", () => {});
-
-	test.todo("move", () => {});
-
-	test.todo("delete", () => {});
+	const path = `root/${charsetPath()}`;
 });
 
 //#endregion files > sub
@@ -55,23 +56,113 @@ describe("files > sub", () => {
 //#region files > undefined
 
 describe("files > undefined", () => {
-	test.todo("writeAllText", () => {});
+	test("writeAllText", async () => {
+		const { fdb } = await get();
 
-	test.todo("readAllText", () => {});
+		// there has got to be a better way to do this
+		try {
+			await fdb.file.writeAllText(undefined, undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileNotFoundError");
+		}
+	});
 
-	test.todo("writeAllBytes", () => {});
+	test("readAllText", async () => {
+		const { fdb } = await get();
 
-	test.todo("readAllBytes", () => {});
+		// there has got to be a better way to do this
+		try {
+			await fdb.file.readAllText(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileNotFoundError");
+		}
+	});
 
-	test.todo("create", () => {});
+	test("writeAllBytes", async () => {
+		const { fdb } = await get();
 
-	test.todo("exists", () => {});
+		// there has got to be a better way to do this
+		try {
+			await fdb.file.writeAllBytes(undefined, undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileNotFoundError");
+		}
+	});
 
-	test.todo("copy", () => {});
+	test("readAllBytes", async () => {
+		const { fdb } = await get();
 
-	test.todo("move", () => {});
+		// there has got to be a better way to do this
+		try {
+			await fdb.file.readAllBytes(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileNotFoundError");
+		}
+	});
 
-	test.todo("delete", () => {});
+	test("create", async () => {
+		const { fdb } = await get();
+
+		// there has got to be a better way to do this
+		try {
+			await fdb.file.create(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileNotFoundError");
+		}
+	});
+
+	test("exists", async () => {
+		const { fdb } = await get();
+
+		// there has got to be a better way to do this
+		try {
+			await fdb.file.exists(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileNotFoundError");
+		}
+	});
+
+	test("copy", async () => {
+		const { fdb } = await get();
+
+		// there has got to be a better way to do this
+		try {
+			await fdb.file.copy(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileError");
+		}
+	});
+
+	test("move", async () => {
+		const { fdb } = await get();
+
+		// there has got to be a better way to do this
+		try {
+			await fdb.file.move(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileError");
+		}
+	});
+
+	test("delete", async () => {
+		const { fdb } = await get();
+
+		// there has got to be a better way to do this
+		try {
+			await fdb.file.delete(undefined);
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileNotFoundError");
+		}
+	});
 });
 
 //#endregion files > undefined
