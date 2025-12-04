@@ -20,7 +20,10 @@
     "dev:packages": "bunup --exports --watch",
     "dev:api": "bun --bun run --watch src/apps/api-testing/src/index.ts",
     "dev:testing": "bun--bun run --watch src/apps/testing/src/index.ts",
-    "dev:drive": "cd src/apps/drive && bun --bun run vite"
+    "dev:drive": "cd src/apps/drive && bun --bun run vite",
+    "test": "bun test --randomize --concurrent",
+    "test:simple": "bun test",
+    "test:excessive": "bun test --randomize --concurrent --rerun-each 32"
   },
   "prettier": {
     "singleQuote": false,
