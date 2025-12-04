@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { charsetPath, get } from "./util";
 
+//#region directories > root
+
 describe("directories > root", () => {
 	const path = "root";
 
@@ -118,6 +120,10 @@ describe("directories > root", () => {
 		expect(foldersNames).toEqual([]);
 	});
 });
+
+//#endregion
+
+//#region directories > sub
 
 describe("directories > sub", () => {
 	const path = `root/${charsetPath()}`;
@@ -237,6 +243,10 @@ describe("directories > sub", () => {
 	});
 });
 
+//#endregion
+
+//#region directories > undefined
+
 describe("directories > undefined", () => {
 	test("create", async () => {
 		const { fdb } = await get();
@@ -298,3 +308,5 @@ describe("directories > undefined", () => {
 		}
 	});
 });
+
+//#endregion
