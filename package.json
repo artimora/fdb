@@ -12,8 +12,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.0",
-    "bunup": "^0.16.10",
-    "npm-run-all": "^4.1.5"
+    "bunup": "^0.16.10"
   },
   "scripts": {
     "build:packages": "bunup  --exports",
