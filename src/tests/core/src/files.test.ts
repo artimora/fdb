@@ -1,13 +1,20 @@
 import { describe, expect, test } from "bun:test";
-import { charsetPath, get } from "./util";
+import { alphanumericCharset, charset, charsetPath, get } from "./util";
 
 //#region files > root
 
 describe("files > root", () => {
-	const path = "root";
+	function getPath(): string {
+		return `root/${alphanumericCharset()}`;
+	}
 
-	test.todo("writeAllText", async () => {
+	test("writeAllText", async () => {
 		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.writeAllText(path, alphanumericCharset());
+
+		expect(await fdb.file.exists(path)).toBeTrue();
 	});
 
 	test.todo("readAllText", async () => {

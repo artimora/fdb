@@ -53,8 +53,10 @@ export default function getFileOperations(
 			if (path === undefined || path === "")
 				throw new FileNotFoundError("Path is undefined");
 
-			if (text === undefined || text === null)
-				throw new FileError("Text is undefined");
+			if (text === undefined || text === null) {
+				await this.create(path);
+				return;
+			}
 
 			await this.writeAllBytes(path, new TextEncoder().encode(text));
 		},
@@ -73,8 +75,10 @@ export default function getFileOperations(
 			if (path === undefined || path === "")
 				throw new FileNotFoundError("Path is undefined");
 
-			if (bytes === undefined || bytes === null)
-				throw new FileError("Bytes is undefined");
+			if (bytes === undefined || bytes === null) {
+				await this.create(path);
+				return;
+			}
 
 			await this.create(path);
 
