@@ -5,7 +5,7 @@ import { alphanumericCharset, charset, charsetPath, get } from "./util";
 
 describe("files > root", () => {
 	function getPath(): string {
-		return `root/${alphanumericCharset()}`;
+		return `root/${alphanumericCharset()}.test`;
 	}
 
 	test("writeAllText", async () => {
@@ -17,36 +17,105 @@ describe("files > root", () => {
 		expect(await fdb.file.exists(path)).toBeTrue();
 	});
 
-	test.todo("readAllText", async () => {
+	test("readAllText", async () => {
 		const { fdb } = await get();
+		const path = getPath();
+
+		const contents = alphanumericCharset();
+
+		await fdb.file.writeAllText(path, contents);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+		expect(await fdb.file.readAllText(path)).toEqual(contents);
 	});
 
-	test.todo("writeAllBytes", async () => {
+	test("writeAllBytes", async () => {
 		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.writeAllBytes(
+			path,
+			new TextEncoder().encode(alphanumericCharset())
+		);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
 	});
 
-	test.todo("readAllBytes", async () => {
+	test("readAllBytes", async () => {
 		const { fdb } = await get();
+		const path = getPath();
+
+		const contents = alphanumericCharset();
+
+		await fdb.file.writeAllBytes(path, new TextEncoder().encode(contents));
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+		expect(
+			new TextDecoder().decode(await fdb.file.readAllBytes(path))
+		).toEqual(contents);
 	});
 
-	test.todo("create", async () => {
+	test("create", async () => {
 		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.create(path);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
 	});
 
-	test.todo("exists", async () => {
+	test("exists", async () => {
 		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.create(path);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
 	});
 
-	test.todo("copy", async () => {
+	test("copy", async () => {
 		const { fdb } = await get();
+		const oldPath = getPath();
+		const newPath = getPath();
+
+		await fdb.file.create(oldPath);
+
+		expect(await fdb.file.exists(oldPath)).toBeTrue();
+		expect(await fdb.file.exists(newPath)).toBeFalse();
+
+		await fdb.file.copy({ originalPath: oldPath, newPath: newPath });
+
+		expect(await fdb.file.exists(oldPath)).toBeTrue();
+		expect(await fdb.file.exists(newPath)).toBeTrue();
 	});
 
-	test.todo("move", async () => {
+	test("move", async () => {
 		const { fdb } = await get();
+		const oldPath = getPath();
+		const newPath = getPath();
+
+		await fdb.file.create(oldPath);
+
+		expect(await fdb.file.exists(oldPath)).toBeTrue();
+		expect(await fdb.file.exists(newPath)).toBeFalse();
+
+		await fdb.file.move({ originalPath: oldPath, newPath: newPath });
+
+		expect(await fdb.file.exists(oldPath)).toBeFalse();
+		expect(await fdb.file.exists(newPath)).toBeTrue();
 	});
 
-	test.todo("delete", async () => {
+	test("delete", async () => {
 		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.create(path);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+
+		await fdb.file.delete(path);
+
+		expect(await fdb.file.exists(path)).toBeFalse();
 	});
 });
 
@@ -55,7 +124,119 @@ describe("files > root", () => {
 //#region files > sub
 
 describe("files > sub", () => {
-	const path = `root/${charsetPath()}`;
+	function getPath(): string {
+		return `root/${alphanumericCharset()}/${alphanumericCharset()}.test`;
+	}
+
+	test("writeAllText", async () => {
+		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.writeAllText(path, alphanumericCharset());
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+	});
+
+	test("readAllText", async () => {
+		const { fdb } = await get();
+		const path = getPath();
+
+		const contents = alphanumericCharset();
+
+		await fdb.file.writeAllText(path, contents);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+		expect(await fdb.file.readAllText(path)).toEqual(contents);
+	});
+
+	test("writeAllBytes", async () => {
+		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.writeAllBytes(
+			path,
+			new TextEncoder().encode(alphanumericCharset())
+		);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+	});
+
+	test("readAllBytes", async () => {
+		const { fdb } = await get();
+		const path = getPath();
+
+		const contents = alphanumericCharset();
+
+		await fdb.file.writeAllBytes(path, new TextEncoder().encode(contents));
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+		expect(
+			new TextDecoder().decode(await fdb.file.readAllBytes(path))
+		).toEqual(contents);
+	});
+
+	test("create", async () => {
+		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.create(path);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+	});
+
+	test("exists", async () => {
+		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.create(path);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+	});
+
+	test("copy", async () => {
+		const { fdb } = await get();
+		const oldPath = getPath();
+		const newPath = getPath();
+
+		await fdb.file.create(oldPath);
+
+		expect(await fdb.file.exists(oldPath)).toBeTrue();
+		expect(await fdb.file.exists(newPath)).toBeFalse();
+
+		await fdb.file.copy({ originalPath: oldPath, newPath: newPath });
+
+		expect(await fdb.file.exists(oldPath)).toBeTrue();
+		expect(await fdb.file.exists(newPath)).toBeTrue();
+	});
+
+	test("move", async () => {
+		const { fdb } = await get();
+		const oldPath = getPath();
+		const newPath = getPath();
+
+		await fdb.file.create(oldPath);
+
+		expect(await fdb.file.exists(oldPath)).toBeTrue();
+		expect(await fdb.file.exists(newPath)).toBeFalse();
+
+		await fdb.file.move({ originalPath: oldPath, newPath: newPath });
+
+		expect(await fdb.file.exists(oldPath)).toBeFalse();
+		expect(await fdb.file.exists(newPath)).toBeTrue();
+	});
+
+	test("delete", async () => {
+		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.create(path);
+
+		expect(await fdb.file.exists(path)).toBeTrue();
+
+		await fdb.file.delete(path);
+
+		expect(await fdb.file.exists(path)).toBeFalse();
+	});
 });
 
 //#endregion files > sub
