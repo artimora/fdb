@@ -1,6 +1,6 @@
-import { cleanPath, splitPath } from "@artimora/fdb";
 import { describe, expect, test } from "bun:test";
 import nodePath from "node:path";
+import { cleanPath, splitPath } from "@artimora/fdb";
 
 describe("splitPath", () => {
 	test("root", () => {

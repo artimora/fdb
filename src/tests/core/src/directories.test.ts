@@ -98,7 +98,7 @@ describe("directories > root", () => {
 		const foldersParents = folders.map((t) => t.parent_folder);
 		const foldersNames = folders.map((t) => t.name);
 
-		const parent = (await fdb.directory.getFolderId(path))!;
+		const parent = await fdb.directory.getFolderId(path);
 
 		expect(folders).toHaveLength(3);
 		expect(foldersParents).toEqual([parent, parent, parent]);
@@ -220,7 +220,7 @@ describe("directories > sub", () => {
 		const foldersParents = folders.map((t) => t.parent_folder);
 		const foldersNames = folders.map((t) => t.name);
 
-		const parent = (await fdb.directory.getFolderId(path))!;
+		const parent = await fdb.directory.getFolderId(path);
 
 		expect(folders).toHaveLength(3);
 		expect(foldersParents).toEqual([parent, parent, parent]);
