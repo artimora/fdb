@@ -9,47 +9,64 @@ export type FileMoveOptions = {
 	originalPath: Potential<string>;
 	newPath: Potential<string>;
 
-	overwrite: Potential<boolean>;
-	createDirectories: Potential<boolean>;
+	overwrite?: Potential<boolean>;
+	createDirectories?: Potential<boolean>;
 };
 
 export type DirectoryDeleteOptions = {
 	path: Potential<string>;
-	onlyOnEmpty: Potential<boolean>;
+	onlyOnEmpty?: Potential<boolean>;
 };
 
 export type DirectoryGetOptions = {
 	path: Potential<string>;
-	recursive: Potential<boolean>;
+	recursive?: Potential<boolean>;
 };
 
-export type FileGetOptions = { data: Potential<boolean> } & DirectoryGetOptions;
+export type FileGetOptions = {
+	data?: Potential<boolean>;
+} & DirectoryGetOptions;
 
 // potential for input, nullable for output
 export type FileOperations = {
-	writeAllText: (path: Potential<string>, text: string) => MaybePromise<void>;
+	writeAllText: (
+		path: Potential<string>,
+		text: Maybe<string>
+	) => MaybePromise<void>;
 	readAllText: (path: Potential<string>) => MaybePromise<string>;
 
 	writeAllBytes: (
 		path: Potential<string>,
-		bytes: Uint8Array,
+		bytes: Maybe<Uint8Array>
 	) => MaybePromise<void>;
 	readAllBytes: (path: Potential<string>) => MaybePromise<Uint8Array>;
 
 	create: (path: Potential<string>) => MaybePromise<void>;
 	exists: (path: Potential<string>) => MaybePromise<boolean>;
-	copy: (options: FileMoveOptions) => MaybePromise<void>;
-	move: (options: FileMoveOptions) => MaybePromise<void>;
+	copy: (options: Maybe<FileMoveOptions>) => MaybePromise<void>;
+	move: (options: Maybe<FileMoveOptions>) => MaybePromise<void>;
 	delete: (path: Potential<string>) => MaybePromise<void>;
 };
 
 export type DirectoryOperations = {
 	create: (path: Potential<string>) => MaybePromise<void>;
-	delete: (options: DirectoryDeleteOptions) => MaybePromise<void>;
+
+	// TODO: give option to pass purey string path
+	delete: (options: Maybe<DirectoryDeleteOptions>) => MaybePromise<void>;
 	exists: (path: Maybe<string>) => MaybePromise<boolean>;
-	getFiles: (options: FileGetOptions) => MaybePromise<FilesTable[]>; // TODO: add filter option and subdirectories option
+
+	// TODO: give option to pass purey string path
+	// TODO: add filter option and subdirectories option
+	getFiles: (options: Maybe<FileGetOptions>) => MaybePromise<FilesTable[]>;
 	getFolderId: (path: Maybe<string>) => MaybePromise<Nullable<string>>;
-	getFolders: (options: DirectoryGetOptions) => MaybePromise<FoldersTable[]>;
+	getFolderById: (
+		path: Maybe<string>
+	) => MaybePromise<Nullable<FoldersTable>>;
+
+	// TODO: give option to pass purey string path
+	getFolders: (
+		options: Maybe<DirectoryGetOptions>
+	) => MaybePromise<FoldersTable[]>;
 };
 
 export interface FoldersTable {
@@ -71,3 +88,11 @@ export interface FDB {
 	folders: FoldersTable;
 	files: FilesTable;
 }
+
+type Event = () => void;
+type Action<T> = (arg: T) => void;
+type Func<T> = () => T;
+
+type PromiseEvent = () => Promise<void>;
+type PromiseAction<T> = (arg: T) => Promise<void>;
+type PromiseFunc<T> = () => Promise<T>;

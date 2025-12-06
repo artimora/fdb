@@ -9,10 +9,12 @@ export default defineWorkspace([
 			minify: true,
 			footer: "// built with love and caffeine by copper :3",
 			unused: {
-				level: "error",
+				level: "error"
 			},
-			plugins: [copy(["../../../README.md", "../../../LICENSE"]).to("../")],
-		},
+			plugins: [
+				copy(["../../../README.md", "../../../LICENSE"]).to("../")
+			]
+		}
 	},
 	{
 		name: "@artimora/fdb-web",
@@ -21,9 +23,11 @@ export default defineWorkspace([
 			minify: true,
 			footer: "// built with love and caffeine by copper :3",
 			unused: {
-				level: "error",
+				level: "error"
 			},
-			plugins: [copy(["../../../README.md", "../../../LICENSE"]).to("../")],
-		},
-	},
+			plugins: [
+				copy(["../../../README.md", "../../../LICENSE"]).to("../")
+			]
+		}
+	}
 ]);

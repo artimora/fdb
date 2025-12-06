@@ -35,8 +35,8 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 fdb.db
 fdb.migrations.txt
-db.sqlite
-db.sqlite*
+*.sqlite
+*.sqlite*
 
 src/packages/**/LICENSE
 src/packages/**/README.md
