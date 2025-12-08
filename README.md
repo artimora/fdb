@@ -15,3 +15,7 @@ something something wrapper libraries for databases and whatnot
 ### fdb-web
 
 > hono library web api connector to fdb
+
+### ukv
+
+> simple user seperated key-value in one table

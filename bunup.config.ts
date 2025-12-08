@@ -29,5 +29,19 @@ export default defineWorkspace([
 				copy(["../../../README.md", "../../../LICENSE"]).to("../")
 			]
 		}
+	},
+	{
+		name: "@artimora/ukv",
+		root: "src/packages/ukv",
+		config: {
+			minify: true,
+			footer: "// built with love and caffeine by copper :3",
+			unused: {
+				level: "error"
+			},
+			plugins: [
+				copy(["../../../README.md", "../../../LICENSE"]).to("../")
+			]
+		}
 	}
 ]);

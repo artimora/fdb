@@ -18,7 +18,8 @@
         "build:packages": "bunup  --exports",
         "dev:packages": "bunup --exports --watch",
         "dev:fdb:api": "bun --bun run --watch src/apps/fdb-api-testing/src/index.ts",
-        "dev:fdb:testing": "bun--bun run --watch src/apps/fdb-testing/src/index.ts",
+        "dev:fdb:testing": "bun --bun run src/apps/fdb-testing/src/index.ts",
+        "dev:ukv:testing": "bun --bun run src/apps/ukv-testing/src/index.ts",
         "test": "bun test --randomize --concurrent",
         "test:simple": "bun test",
         "test:excessive": "bun test --randomize --concurrent --rerun-each 32"
