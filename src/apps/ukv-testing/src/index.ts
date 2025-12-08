@@ -14,3 +14,5 @@ const db = new Kysely<any>({
 await migrateToLatest(db);
 
 const kv = createUKV(db);
+
+await kv.set({ key: "key", value: "value" });
