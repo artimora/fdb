@@ -1,5 +1,5 @@
 {
-    "name": "api-testing",
+    "name": "@artimora/fdb-api-testing",
     "version": "1.0.0",
     "type": "module",
     "files": [
