@@ -1,11 +1,67 @@
 import type { Kysely } from "kysely";
-import type { MaybePromise, Operations, Potential, UKV } from "./types";
+import type { Operations, UKV } from "./types";
 
 export default function getOperations(db: Kysely<UKV>): Operations {
+	const defaultWorkspace: string = "default";
+
 	return {
-		get: function (
-			input: string | { key: string; workspace: string }
-		): Promise<string> {},
+		get: async function (
+			input?:
+				| string // key of item in default workspace
+				| { key: string; workspace: string } // item with key in certain workspace
+				| { workspace: string } // all items in workspace
+				| undefined // all items in all workspaces
+		): Promise<string | { key: string; value: string }[] | undefined> {
+			async function singular(
+				key: string,
+				workspace?: string
+			): Promise<string | undefined> {
+				workspace ??= defaultWorkspace;
+
+				const item = await db
+					.selectFrom("ukv")
+					.select("value")
+					.where("key", "=", key)
+					.where("workspace", "=", workspace)
+					.executeTakeFirst();
+
+				if (item === undefined) return undefined;
+				return item.value;
+			}
+
+			async function all(workspace?: string) {
+				if (workspace === undefined) {
+					const items = await db
+						.selectFrom("ukv")
+						.select(["key", "value"])
+						.execute();
+
+					return items;
+				} else {
+					const items = await db
+						.selectFrom("ukv")
+						.select(["key", "value"])
+						.where("workspace", "=", workspace)
+						.execute();
+
+					return items;
+				}
+			}
+
+			if (typeof input === "string") {
+				return await singular(input, defaultWorkspace); // key of item in default workspace
+			} else {
+				if (input === undefined) {
+					return await all(); // all items in all workspaces
+				} else {
+					if ("key" in input) {
+						return await singular(input.key, input.workspace); // item with key in certain workspace
+					} else {
+						return await all(input.workspace); // all items in workspace
+					}
+				}
+			}
+		},
 
 		set: async function (
 			input:
@@ -17,18 +73,89 @@ export default function getOperations(db: Kysely<UKV>): Operations {
 			if ("workspace" in input) {
 				value = input;
 			} else {
-				value = { ...input, workspace: "default" };
+				value = { ...input, workspace: defaultWorkspace };
 			}
 
-			await db.insertInto("ukv").values(value).execute();
+			if (await this.exists(value))
+				await db
+					.updateTable("ukv")
+					.set({ value: value.value })
+					.where("key", "=", value.key)
+					.where("workspace", "=", value.workspace)
+					.execute();
+			else await db.insertInto("ukv").values(value).execute();
 		},
 
-		getAll: function (workspace?: Potential<string>): Promise<string[]> {},
+		remove: async function (
+			input:
+				| string // key of item in default workspace
+				| { key: string; workspace: string } // item with key in certain workspace
+				| { workspace: string } // all items in workspace
+				| undefined // all items in all workspaces
+		): Promise<bigint> {
+			async function singular(
+				key: string,
+				workspace?: string
+			): Promise<bigint> {
+				workspace ??= defaultWorkspace;
 
-		remove: function (
+				const count = await db
+					.deleteFrom("ukv")
+					.where("key", "=", key)
+					.where("workspace", "=", workspace)
+					.executeTakeFirst();
+
+				return count.numDeletedRows;
+			}
+
+			async function all(workspace?: string): Promise<bigint> {
+				const count =
+					workspace === undefined
+						? await db.deleteFrom("ukv").execute()
+						: await db
+								.deleteFrom("ukv")
+								.where("workspace", "=", workspace)
+								.execute();
+
+				return count
+					.map((r) => r.numDeletedRows)
+					.reduce((total, current) => total + current, 0n);
+			}
+
+			if (typeof input === "string") {
+				return await singular(input, defaultWorkspace); // key of item in default workspace
+			} else {
+				if (input === undefined) {
+					return await all(); // all items in all workspaces
+				} else {
+					if ("key" in input) {
+						return await singular(input.key, input.workspace); // item with key in certain workspace
+					} else {
+						return await all(input.workspace); // all items in workspace
+					}
+				}
+			}
+		},
+
+		exists: async function (
 			input: string | { key: string; workspace: string }
-		): Promise<void> {},
+		): Promise<boolean> {
+			let value: { key: string; workspace: string };
 
-		removeAll: function (workspace?: Potential<string>): Promise<void> {}
+			if (typeof input === "string") {
+				value = { key: input, workspace: defaultWorkspace };
+			} else {
+				value = input;
+			}
+
+			const item = await db
+				.selectFrom("ukv")
+				.selectAll()
+				.where("key", "=", value.key)
+				.where("workspace", "=", value.workspace)
+				.executeTakeFirst();
+
+			return item !== undefined;
+		}
 	};
 }

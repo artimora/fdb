@@ -1,10 +1,3 @@
-export type Potential<T> = T | undefined;
-export type Nullable<T> = T | null;
-
-export type Maybe<T> = T | undefined | null;
-
-export type MaybePromise<T> = Promise<T> | T;
-
 export interface UKVTable {
 	key: string;
 	value: string;
@@ -15,24 +8,32 @@ export interface UKV {
 	ukv: UKVTable;
 }
 
-// potential for input, nullable for output
 export interface Operations {
-	// base
 	get: (
-		input: string | { key: string; workspace: string }
-	) => MaybePromise<string>;
+		input:
+			| string // key of item in default workspace
+			| { key: string; workspace: string } // item with key in certain workspace
+			| { workspace: string } // all items in workspace
+			| undefined // all items in all workspaces
+	) => Promise<string | { key: string; value: string }[] | undefined>;
+
 	set: (
 		input:
 			| { key: string; value: string }
 			| { key: string; value: string; workspace: string }
-	) => MaybePromise<void>;
+	) => Promise<void>;
 
-	// extra
-	getAll: (workspace?: Potential<string>) => MaybePromise<string[]>;
-
-	// managment
 	remove: (
-		input: string | { key: string; workspace: string }
-	) => MaybePromise<void>;
-	removeAll: (workspace?: Potential<string>) => MaybePromise<void>;
+		input:
+			| string // key of item in default workspace
+			| { key: string; workspace: string } // item with key in certain workspace
+			| { workspace: string } // all items in workspace
+			| undefined // all items in all workspaces
+	) => Promise<bigint>;
+
+	exists: (
+		input:
+			| string // key of item in default workspace
+			| { key: string; workspace: string } // item with key in certain workspace
+	) => Promise<boolean>;
 }

@@ -1,5 +1,5 @@
 import type { Kysely } from "kysely";
-import type { MaybePromise, Operations, Potential, UKV } from "./types";
+import type { Operations, UKV } from "./types";
 import getOperations from "./operations";
 
 export function createUKV<DB>(db: Kysely<DB>): ukv {
@@ -17,27 +17,33 @@ export class ukv implements Operations {
 
 		this.get = this.operations.get;
 		this.set = this.operations.set;
-		this.getAll = this.operations.getAll;
 		this.remove = this.operations.remove;
-		this.removeAll = this.operations.removeAll;
+		this.exists = this.operations.exists;
 	}
 
-	// base
 	get: (
-		input: string | { key: string; workspace: string }
-	) => MaybePromise<string>;
+		input:
+			| string
+			| { key: string; workspace: string }
+			| { workspace: string }
+			| undefined
+	) => Promise<string | { key: string; value: string }[] | undefined>;
+
 	set: (
 		input:
 			| { key: string; value: string }
 			| { key: string; value: string; workspace: string }
-	) => MaybePromise<void>;
+	) => Promise<void>;
 
-	// extra
-	getAll: (workspace?: Potential<string>) => MaybePromise<string[]>;
-
-	// managment
 	remove: (
+		input:
+			| string
+			| { key: string; workspace: string }
+			| { workspace: string }
+			| undefined
+	) => Promise<bigint>;
+
+	exists: (
 		input: string | { key: string; workspace: string }
-	) => MaybePromise<void>;
-	removeAll: (workspace?: Potential<string>) => MaybePromise<void>;
+	) => Promise<boolean>;
 }
