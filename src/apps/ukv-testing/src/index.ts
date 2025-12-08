@@ -13,4 +13,4 @@ const db = new Kysely<any>({
 
 await migrateToLatest(db);
 
-const userKV = createUKV(db);
+const kv = createUKV(db);

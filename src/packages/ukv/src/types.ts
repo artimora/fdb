@@ -14,3 +14,14 @@ export interface UKVTable {
 export interface UKV {
 	ukv: UKVTable;
 }
+
+export type GetInput = string | { key: string; workspace: string };
+export type SetInput =
+	| { key: string; value: string }
+	| { key: string; value: string; workspace: string };
+
+// potential for input, nullable for output
+export interface Operations {
+	get: (input: GetInput) => MaybePromise<string>;
+	set: (input: SetInput) => MaybePromise<void>;
+}
