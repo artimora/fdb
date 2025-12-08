@@ -14,8 +14,8 @@ getProvider();
 // biome-ignore lint/suspicious/noExplicitAny: we dont need anything but the local
 const db = new Kysely<any>({
 	dialect: new BunSqliteDialect({
-		database: new Database("db.sqlite"),
-	}),
+		database: new Database("db.fdb.sqlite")
+	})
 });
 
 await migrateToLatest(db);
@@ -24,7 +24,7 @@ const fileDB = getHandler(createFDB(db));
 
 const app: Hono = new Hono()
 	.use(logger())
-	.use('/api/*', cors())
+	.use("/api/*", cors())
 	.get(
 		"/",
 		Scalar({
@@ -33,8 +33,8 @@ const app: Hono = new Hono()
 			showSidebar: true,
 			showToolbar: "never",
 			defaultOpenAllTags: true,
-			isEditable: true,
-		}),
+			isEditable: true
+		})
 	)
 	.mount("/", fileDB.fetch);
 

@@ -7,8 +7,8 @@ import { migrateToLatest } from "./migrations";
 // biome-ignore lint/suspicious/noExplicitAny: we dont need anything but the local
 const db = new Kysely<any>({
 	dialect: new BunSqliteDialect({
-		database: new Database("db.sqlite"),
-	}),
+		database: new Database("db.fdb.sqlite")
+	})
 });
 
 await migrateToLatest(db);
