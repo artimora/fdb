@@ -5,28 +5,30 @@ export default function getOperations(db: Kysely<UKV>): Operations {
 	return {
 		get: function (
 			input: string | { key: string; workspace: string }
-		): MaybePromise<string> {
-			throw new Error("Function not implemented.");
-		},
-		set: function (
+		): Promise<string> {},
+
+		set: async function (
 			input:
 				| { key: string; value: string }
 				| { key: string; value: string; workspace: string }
-		): MaybePromise<void> {
-			throw new Error("Function not implemented.");
+		): Promise<void> {
+			let value: { key: string; value: string; workspace: string };
+
+			if ("workspace" in input) {
+				value = input;
+			} else {
+				value = { ...input, workspace: "default" };
+			}
+
+			await db.insertInto("ukv").values(value).execute();
 		},
-		getAll: function (workspace?: Potential<string>): MaybePromise<void> {
-			throw new Error("Function not implemented.");
-		},
+
+		getAll: function (workspace?: Potential<string>): Promise<string[]> {},
+
 		remove: function (
 			input: string | { key: string; workspace: string }
-		): MaybePromise<void> {
-			throw new Error("Function not implemented.");
-		},
-		removeAll: function (
-			workspace?: Potential<string>
-		): MaybePromise<void> {
-			throw new Error("Function not implemented.");
-		}
+		): Promise<void> {},
+
+		removeAll: function (workspace?: Potential<string>): Promise<void> {}
 	};
 }

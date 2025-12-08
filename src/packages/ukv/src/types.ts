@@ -28,7 +28,7 @@ export interface Operations {
 	) => MaybePromise<void>;
 
 	// extra
-	getAll: (workspace?: Potential<string>) => MaybePromise<void>;
+	getAll: (workspace?: Potential<string>) => MaybePromise<string[]>;
 
 	// managment
 	remove: (
