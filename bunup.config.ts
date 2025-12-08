@@ -6,7 +6,7 @@ export default defineWorkspace([
 		name: "@artimora/fdb",
 		root: "src/packages/fdb",
 		config: {
-			minify: true,
+			minify: false,
 			footer: "// built with love and caffeine by copper :3",
 			unused: {
 				level: "error"
@@ -20,7 +20,7 @@ export default defineWorkspace([
 		name: "@artimora/fdb-web",
 		root: "src/packages/fdb-web",
 		config: {
-			minify: true,
+			minify: false,
 			footer: "// built with love and caffeine by copper :3",
 			unused: {
 				level: "error"
@@ -34,7 +34,7 @@ export default defineWorkspace([
 		name: "@artimora/ukv",
 		root: "src/packages/ukv",
 		config: {
-			minify: true,
+			minify: false,
 			footer: "// built with love and caffeine by copper :3",
 			unused: {
 				level: "error"
