@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { charsetPath, get } from "./util";
+import { alphanumericCharset, charsetPath, get } from "./util";
 
 //#region directories > root
 
@@ -245,6 +245,60 @@ describe("directories > sub", () => {
 
 //#endregion
 
+//#region directories > recursive flags
+
+describe("directories > recursive flags", () => {
+	test("getFiles returns only current folder when recursive is false", async () => {
+		const { fdb } = await get();
+
+		const base = `root/${alphanumericCharset()}`;
+		const child = `${base}/child`;
+		const grandchild = `${child}/grandchild`;
+
+		await fdb.directory.create(grandchild);
+
+		await fdb.file.writeAllText(`${base}/file-root.test`, "root");
+		await fdb.file.writeAllText(`${child}/file-child.test`, "child");
+		await fdb.file.writeAllText(
+			`${grandchild}/file-grandchild.test`,
+			"grandchild"
+		);
+
+		const files = await fdb.directory.getFiles({
+			path: base,
+			recursive: false
+		});
+
+		const names = files.map((f) => f.name);
+
+		expect(names).toEqual(
+			expect.arrayContaining(["file-root.test", "file-child.test"])
+		);
+		expect(names).not.toContain("file-grandchild.test");
+	});
+
+	test("getFolders respects recursive flag", async () => {
+		const { fdb } = await get();
+
+		const base = `root/${alphanumericCharset()}`;
+		const child = `${base}/child`;
+		const grandchild = `${child}/grandchild`;
+
+		await fdb.directory.create(grandchild);
+
+		const folders = await fdb.directory.getFolders({
+			path: base,
+			recursive: false
+		});
+
+		const names = folders.map((f) => f.name);
+
+		expect(names).toEqual(["child"]);
+	});
+});
+
+//#endregion
+
 //#region directories > undefined
 
 describe("directories > undefined", () => {
@@ -305,6 +359,42 @@ describe("directories > undefined", () => {
 		} catch (err) {
 			const error = err as Error;
 			expect(error.name).toEqual("DirectoryError");
+		}
+	});
+});
+
+//#endregion
+
+//#region directories > errors
+
+describe("directories > errors", () => {
+	test("delete rejects non-empty directory with nested contents", async () => {
+		const { fdb } = await get();
+
+		const base = `root/${alphanumericCharset()}`;
+		const child = `${base}/child`;
+
+		await fdb.directory.create(child);
+		await fdb.file.create(`${child}/file.test`);
+
+		try {
+			await fdb.directory.delete({ path: base, onlyOnEmpty: true });
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("DirectoryError");
+		}
+
+		expect(await fdb.directory.exists(base)).toBeTrue();
+	});
+
+	test("create throws on empty path", async () => {
+		const { fdb } = await get();
+
+		try {
+			await fdb.directory.create("");
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("DirectoryNotFoundError");
 		}
 	});
 });

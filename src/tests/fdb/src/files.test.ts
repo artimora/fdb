@@ -241,6 +241,78 @@ describe("files > sub", () => {
 
 //#endregion files > sub
 
+//#region files > data + errors
+
+describe("files > data + errors", () => {
+	function getPath(): string {
+		return `root/${alphanumericCharset()}.test`;
+	}
+
+	test("copy preserves data and move transfers data", async () => {
+		const { fdb } = await get();
+		const source = getPath();
+		const copyPath = getPath();
+		const movePath = getPath();
+		const contents = `content-${alphanumericCharset()}`;
+
+		await fdb.file.writeAllText(source, contents);
+
+		await fdb.file.copy({ originalPath: source, newPath: copyPath });
+		expect(await fdb.file.readAllText(copyPath)).toEqual(contents);
+		expect(await fdb.file.readAllText(source)).toEqual(contents);
+
+		await fdb.file.move({ originalPath: source, newPath: movePath });
+		expect(await fdb.file.exists(source)).toBeFalse();
+		expect(await fdb.file.readAllText(movePath)).toEqual(contents);
+	});
+
+	test("copy throws when destination exists and overwrite is false", async () => {
+		const { fdb } = await get();
+		const source = getPath();
+		const destination = getPath();
+
+		await fdb.file.writeAllText(source, "original");
+		await fdb.file.writeAllText(destination, "existing");
+
+		try {
+			await fdb.file.copy({
+				originalPath: source,
+				newPath: destination,
+				overwrite: false
+			});
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileNotFoundError");
+		}
+
+		expect(await fdb.file.readAllText(destination)).toEqual("existing");
+		expect(await fdb.file.readAllText(source)).toEqual("original");
+	});
+
+	test("readAllBytes returns empty array when file has no data", async () => {
+		const { fdb } = await get();
+		const path = getPath();
+
+		await fdb.file.create(path);
+		const bytes = await fdb.file.readAllBytes(path);
+
+		expect(Array.from(bytes)).toEqual([]);
+	});
+
+	test("create throws on empty path", async () => {
+		const { fdb } = await get();
+
+		try {
+			await fdb.file.create("");
+		} catch (err) {
+			const error = err as Error;
+			expect(error.name).toEqual("FileNotFoundError");
+		}
+	});
+});
+
+//#endregion files > data + errors
+
 //#region files > undefined
 
 describe("files > undefined", () => {

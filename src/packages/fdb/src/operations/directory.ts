@@ -17,15 +17,15 @@ import type {
 import { splitPath } from "../util";
 
 export default function getDirectoryOperations(
-	db: Kysely<FDB>
-): DirectoryOperations {
-	return {
-		create: async function (path: Potential<string>): Promise<void> {
-			if (path === undefined)
-				throw new DirectoryNotFoundError("Path is undefined");
-			if (await this.exists(path)) return; // direct checking if it already exists
+		db: Kysely<FDB>
+	): DirectoryOperations {
+		return {
+			create: async function (path: Potential<string>): Promise<void> {
+				if (path === undefined || path === "")
+					throw new DirectoryNotFoundError("Path is undefined");
+				if (await this.exists(path)) return; // direct checking if it already exists
 
-			const parts = splitPath(path);
+				const parts = splitPath(path);
 
 			if (parts === undefined)
 				throw new DirectoryError("Path is undefined");
