@@ -1,9 +1,11 @@
+// biome-ignore-all lint/complexity/useArrowFunction: consistency
 import type { Kysely } from "kysely";
-import type { Operations, UKV } from "./types";
+import type { Operations, Options, UKV } from "./types";
 
-export default function getOperations(db: Kysely<UKV>): Operations {
-	const defaultWorkspace: string = "default";
-
+export default function getOperations(
+	db: Kysely<UKV>,
+	options: Options
+): Operations {
 	return {
 		get: async function (
 			input?:
@@ -16,7 +18,7 @@ export default function getOperations(db: Kysely<UKV>): Operations {
 				key: string,
 				workspace?: string
 			): Promise<string | undefined> {
-				workspace ??= defaultWorkspace;
+				workspace ??= options.defaultWorkspace;
 
 				const item = await db
 					.selectFrom("ukv")
@@ -49,7 +51,7 @@ export default function getOperations(db: Kysely<UKV>): Operations {
 			}
 
 			if (typeof input === "string") {
-				return await singular(input, defaultWorkspace); // key of item in default workspace
+				return await singular(input, options.defaultWorkspace); // key of item in default workspace
 			} else {
 				if (input === undefined) {
 					return await all(); // all items in all workspaces
@@ -73,7 +75,7 @@ export default function getOperations(db: Kysely<UKV>): Operations {
 			if ("workspace" in input) {
 				value = input;
 			} else {
-				value = { ...input, workspace: defaultWorkspace };
+				value = { ...input, workspace: options.defaultWorkspace };
 			}
 
 			if (await this.exists(value))
@@ -97,7 +99,7 @@ export default function getOperations(db: Kysely<UKV>): Operations {
 				key: string,
 				workspace?: string
 			): Promise<bigint> {
-				workspace ??= defaultWorkspace;
+				workspace ??= options.defaultWorkspace;
 
 				const count = await db
 					.deleteFrom("ukv")
@@ -123,7 +125,7 @@ export default function getOperations(db: Kysely<UKV>): Operations {
 			}
 
 			if (typeof input === "string") {
-				return await singular(input, defaultWorkspace); // key of item in default workspace
+				return await singular(input, options.defaultWorkspace); // key of item in default workspace
 			} else {
 				if (input === undefined) {
 					return await all(); // all items in all workspaces
@@ -143,7 +145,7 @@ export default function getOperations(db: Kysely<UKV>): Operations {
 			let value: { key: string; workspace: string };
 
 			if (typeof input === "string") {
-				value = { key: input, workspace: defaultWorkspace };
+				value = { key: input, workspace: options.defaultWorkspace };
 			} else {
 				value = input;
 			}
@@ -156,6 +158,20 @@ export default function getOperations(db: Kysely<UKV>): Operations {
 				.executeTakeFirst();
 
 			return item !== undefined;
+		},
+
+		keys: async function (workspace?: string): Promise<string[]> {
+			const result = await (workspace === undefined
+				? db.selectFrom("ukv").select("key").execute()
+				: db
+						.selectFrom("ukv")
+						.select("key")
+						.where("workspace", "=", workspace)
+						.execute());
+
+			const keys = result.map((i) => i.key);
+
+			return keys;
 		}
 	};
 }

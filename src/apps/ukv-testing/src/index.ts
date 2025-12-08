@@ -16,3 +16,14 @@ await migrateToLatest(db);
 const kv = createUKV(db);
 
 await kv.set({ key: "key", value: "value" });
+await kv.set({ key: "key1", value: "value1" });
+await kv.set({ key: "key2", value: "value2" });
+await kv.set({ key: "key3", value: "value3" });
+
+await kv.set({ key: "otherkey1", value: "value1", workspace: "other" });
+await kv.set({ key: "otherkey2", value: "value2", workspace: "other" });
+await kv.set({ key: "otherkey3", value: "value3", workspace: "other" });
+
+console.log(await kv.get("key"));
+
+console.log(await kv.get({ workspace: "other" }));

@@ -1,3 +1,7 @@
+export type Options = {
+	defaultWorkspace: string;
+};
+
 export interface UKVTable {
 	key: string;
 	value: string;
@@ -10,7 +14,7 @@ export interface UKV {
 
 export interface Operations {
 	get: (
-		input:
+		input?:
 			| string // key of item in default workspace
 			| { key: string; workspace: string } // item with key in certain workspace
 			| { workspace: string } // all items in workspace
@@ -36,4 +40,6 @@ export interface Operations {
 			| string // key of item in default workspace
 			| { key: string; workspace: string } // item with key in certain workspace
 	) => Promise<boolean>;
+
+	keys: (workspace?: string) => Promise<string[]>;
 }
