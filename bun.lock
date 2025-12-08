@@ -88,6 +88,17 @@
         "@types/bun": "latest",
       },
     },
+    "src/tests/ukv": {
+      "name": "@artimora/tests-ukv",
+      "version": "1.0.0",
+      "dependencies": {
+        "@artimora/ukv": "workspace:*",
+        "kysely-bun-sqlite": "^0.4.0",
+      },
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+    },
   },
   "packages": {
     "@artimora/fdb": ["@artimora/fdb@workspace:src/packages/fdb"],
@@ -99,6 +110,8 @@
     "@artimora/fdb-web": ["@artimora/fdb-web@workspace:src/packages/fdb-web"],
 
     "@artimora/tests-fdb": ["@artimora/tests-fdb@workspace:src/tests/fdb"],
+
+    "@artimora/tests-ukv": ["@artimora/tests-ukv@workspace:src/tests/ukv"],
 
     "@artimora/ukv": ["@artimora/ukv@workspace:src/packages/ukv"],
 

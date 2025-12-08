@@ -1,0 +1,23 @@
+{
+    "name": "@artimora/tests-ukv",
+    "version": "1.0.0",
+    "type": "module",
+    "packageManager": "bun@1.21.1",
+    "devEngines": {
+        "packageManager": {
+            "name": "bun",
+            "version": "1.21.1"
+        },
+        "runtime": {
+            "name": "bun",
+            "version": "1.21.1"
+        }
+    },
+    "dependencies": {
+        "@artimora/ukv": "workspace:*",
+        "kysely-bun-sqlite": "^0.4.0"
+    },
+    "devDependencies": {
+        "@types/bun": "latest"
+    }
+}
