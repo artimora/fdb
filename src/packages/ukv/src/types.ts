@@ -28,7 +28,7 @@ export interface Operations {
 	) => Promise<void>;
 
 	remove: (
-		input:
+		input?:
 			| string // key of item in default workspace
 			| { key: string; workspace: string } // item with key in certain workspace
 			| { workspace: string } // all items in workspace

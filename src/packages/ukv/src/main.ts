@@ -50,7 +50,7 @@ export class ukv implements Operations {
 			| { key: string; value: string; workspace: string }
 	) => Promise<void>;
 	remove: (
-		input:
+		input?:
 			| string
 			| { key: string; workspace: string }
 			| { workspace: string }
